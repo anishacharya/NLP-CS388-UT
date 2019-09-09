@@ -2,6 +2,7 @@
 
 from typing import List
 
+
 class Token:
     """
     Abstraction to bundle words with POS and syntactic chunks for featurization

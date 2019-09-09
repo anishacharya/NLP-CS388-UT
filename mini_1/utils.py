@@ -3,6 +3,12 @@
 from typing import List
 import numpy as np
 
+"""
+Author: Anish Acharya <anishacharya@utexas.edu>
+Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
+"""
+
+
 class Indexer(object):
     """
     Bijection between objects and integers starting at 0. Useful for mapping
@@ -201,6 +207,7 @@ def test_beam():
     beam.add("e", 8)
     beam.add("f", 6.5)
     print("Should contain e, b, f, c, a: %s" % beam)
+
 
 if __name__ == '__main__':
     test_beam()

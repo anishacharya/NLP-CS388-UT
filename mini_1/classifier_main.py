@@ -18,11 +18,16 @@ def _parse_args():
     """
     parser = argparse.ArgumentParser(description='trainer.py')
     parser.add_argument('--model', type=str, default='BAD', help='model to run (BAD, CLASSIFIER)')
-    parser.add_argument('--train_path', type=str, default='data/eng.train', help='path to train set (you should not need to modify)')
-    parser.add_argument('--dev_path', type=str, default='data/eng.testa', help='path to dev set (you should not need to modify)')
-    parser.add_argument('--blind_test_path', type=str, default='data/eng.testb.blind', help='path to dev set (you should not need to modify)')
-    parser.add_argument('--test_output_path', type=str, default='eng.testb.out', help='output path for test predictions')
-    parser.add_argument('--no_run_on_test', dest='run_on_test', default=True, action='store_false', help='skip printing output on the test set')
+    parser.add_argument('--train_path', type=str, default='data/eng.train',
+                        help='path to train set (you should not need to modify)')
+    parser.add_argument('--dev_path', type=str, default='data/eng.testa',
+                        help='path to dev set (you should not need to modify)')
+    parser.add_argument('--blind_test_path', type=str, default='data/eng.testb.blind',
+                        help='path to dev set (you should not need to modify)')
+    parser.add_argument('--test_output_path', type=str, default='eng.testb.out',
+                        help='output path for test predictions')
+    parser.add_argument('--no_run_on_test', dest='run_on_test', default=True, action='store_false',
+                        help='skip printing output on the test set')
     args = parser.parse_args()
     return args
 
@@ -32,10 +37,11 @@ class PersonExample(object):
     Data wrapper for a single sentence for person classification, which consists of many individual tokens to classify.
 
     Attributes:
-        tokens: the sentence to classify
+        tokens: the sentence to classify : A list of Token Objects
         labels: 0 if non-person name, 1 if person name for each token in the sentence
     """
-    def __init__(self, tokens: List[str], labels: List[int]):
+    def __init__(self, tokens: List[Token],
+                 labels: List[int]):
         self.tokens = tokens
         self.labels = labels
 
@@ -51,7 +57,9 @@ def transform_for_classification(ner_exs: List[LabeledSentence]):
     for labeled_sent in ner_exs:
         tags = bio_tags_from_chunks(labeled_sent.chunks, len(labeled_sent))
         labels = [1 if tag.endswith("PER") else 0 for tag in tags]
-        yield PersonExample([tok.word for tok in labeled_sent.tokens], labels)
+
+        yield PersonExample(labeled_sent.tokens,
+                            labels)
 
 
 class CountBasedPersonClassifier(object):
@@ -67,8 +75,8 @@ class CountBasedPersonClassifier(object):
         self.pos_counts = pos_counts
         self.neg_counts = neg_counts
 
-    def predict(self, tokens: List[str], idx: int):
-        if self.pos_counts[tokens[idx]] > self.neg_counts[tokens[idx]]:
+    def predict(self, tokens: List[Token], idx: int):
+        if self.pos_counts[tokens[idx].word] > self.neg_counts[tokens[idx].word]:
             return 1
         else:
             return 0
@@ -84,9 +92,9 @@ def train_count_based_binary_classifier(ner_exs: List[PersonExample]):
     for ex in ner_exs:
         for idx in range(0, len(ex)):
             if ex.labels[idx] == 1:
-                pos_counts[ex.tokens[idx]] += 1.0
+                pos_counts[ex.tokens[idx].word] += 1.0
             else:
-                neg_counts[ex.tokens[idx]] += 1.0
+                neg_counts[ex.tokens[idx].word] += 1.0
     print(repr(pos_counts))
     print(repr(pos_counts["Peter"]))
     print(repr(pos_counts["aslkdjtalk;sdjtakl"]))
@@ -180,7 +188,7 @@ def predict_write_output_to_file(exs: List[PersonExample], classifier: PersonCla
     for ex in exs:
         for idx in range(0, len(ex)):
             prediction = classifier.predict(ex.tokens, idx)
-            f.write(ex.tokens[idx] + " " + repr(int(prediction)) + "\n")
+            f.write(ex.tokens[idx].word + " " + repr(int(prediction)) + "\n")
         f.write("\n")
     f.close()
 
