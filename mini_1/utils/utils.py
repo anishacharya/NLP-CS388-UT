@@ -36,7 +36,7 @@ class Indexer(object):
         :param index: integer index to look up
         :return: Returns the object corresponding to the particular index or None if not found
         """
-        if (index not in self.ints_to_objs):
+        if index not in self.ints_to_objs:
             return None
         else:
             return self.ints_to_objs[index]
@@ -53,7 +53,7 @@ class Indexer(object):
         :param object: object to look up
         :return: Returns -1 if the object isn't present, index otherwise
         """
-        if (object not in self.objs_to_ints):
+        if object not in self.objs_to_ints:
             return -1
         else:
             return self.objs_to_ints[object]
@@ -67,10 +67,12 @@ class Indexer(object):
         """
         if not add:
             return self.index_of(object)
-        if (object not in self.objs_to_ints):
+        
+        if object not in self.objs_to_ints:
             new_idx = len(self.objs_to_ints)
             self.objs_to_ints[object] = new_idx
             self.ints_to_objs[new_idx] = object
+        
         return self.objs_to_ints[object]
 
 

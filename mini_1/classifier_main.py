@@ -20,7 +20,7 @@ def _parse_args():
     :return: the parsed args bundle
     """
     parser = argparse.ArgumentParser(description='trainer.py')
-    parser.add_argument('--model', type=str, default='BAD', help='model to run (BAD, CLASSIFIER)')
+    parser.add_argument('--model', type=str, default='CLASSIFIER', help='model to run (BAD, CLASSIFIER)')
     parser.add_argument('--train_path', type=str, default='data/eng.train',
                         help='path to train set (you should not need to modify)')
     parser.add_argument('--dev_path', type=str, default='data/eng.testa',
@@ -39,21 +39,25 @@ if __name__ == '__main__':
     start_time = time.time()
     args = _parse_args()
     print(args)
+
     # Load the training and test data
     train_class_exs = list(transform_label_for_binary_classification(read_data(args.train_path)))
     dev_class_exs = list(transform_label_for_binary_classification(read_data(args.dev_path)))
+
     # Train the model
     if args.model == "BAD":
-        classifier = train_count_based_binary_classifier(train_class_exs)
+        classifier = run_count_based_binary_ner(train_class_exs)
     else:
-        classifier = train_base_classifier(train_class_exs)
+        classifier = run_model_based_binary_ner(train_class_exs)
 
     print("Data reading and training took %f seconds" % (time.time() - start_time))
     # Evaluate on training, development, and test data
     print("===Train accuracy===")
     evaluate_classifier(train_class_exs, classifier)
+
     print("===Dev accuracy===")
     evaluate_classifier(dev_class_exs, classifier)
+
     if args.run_on_test:
         print("Running on test")
         test_exs = list(transform_label_for_binary_classification(read_data(args.blind_test_path)))

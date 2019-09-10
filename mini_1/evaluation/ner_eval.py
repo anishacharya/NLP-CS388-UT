@@ -1,6 +1,6 @@
-from data_utils.nerdata import *
 from classifiers.baseline_classifier import *
 from classifiers.label_count_classifier import *
+
 from typing import List
 
 """
@@ -9,7 +9,7 @@ Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
 """
 
 
-def evaluate_classifier(exs: List[PersonExample], classifier: PersonClassifier):
+def evaluate_classifier(exs: List[PersonExample], classifier: BaselineClassifier):
     """
     Prints evaluation of the classifier on the given examples
     :param exs: PersonExample instances to run on
@@ -59,7 +59,7 @@ def print_evaluation(golds: List[int], predictions: List[int]):
     print("F1: %f" % f1)
 
 
-def predict_write_output_to_file(exs: List[PersonExample], classifier: PersonClassifier, outfile: str):
+def predict_write_output_to_file(exs: List[PersonExample], classifier: BaselineClassifier, outfile: str):
     """
     Runs prediction on exs and writes the outputs to outfile, one token per line
     :param exs:
