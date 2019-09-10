@@ -173,6 +173,22 @@ def bio_tags_from_chunks(chunks: List[Chunk], sent_len: int) -> List[str]:
             tags.append("O")
     return tags
 
+class PersonExample(object):
+    """
+    Data wrapper for a single sentence for person classification, which consists of many individual tokens to classify.
+
+    Attributes:
+        tokens: the sentence to classify : A list of Token Objects
+        labels: 0 if non-person name, 1 if person name for each token in the sentence
+    """
+    def __init__(self, tokens: List[Token],
+                 labels: List[int]):
+        self.tokens = tokens
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.tokens)
+
 
 def read_data(file: str) -> List[LabeledSentence]:
     """
