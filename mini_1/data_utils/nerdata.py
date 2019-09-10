@@ -1,6 +1,9 @@
-# nerdata.py
-
 from typing import List
+
+"""
+Author: Anish Acharya <anishacharya@utexas.edu>
+Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
+"""
 
 
 class Token:
@@ -163,7 +166,7 @@ def bio_tags_from_chunks(chunks: List[Chunk], sent_len: int) -> List[str]:
     """
     tags = []
     for i in range(0, sent_len):
-        matching_chunks = list(filter(lambda chunk: chunk.start_idx <= i and i < chunk.end_idx, chunks))
+        matching_chunks = list(filter(lambda chunk: chunk.start_idx <= i < chunk.end_idx, chunks))
         if len(matching_chunks) > 0:
             if i == matching_chunks[0].start_idx:
                 tags.append("B-" + matching_chunks[0].label)
@@ -172,6 +175,7 @@ def bio_tags_from_chunks(chunks: List[Chunk], sent_len: int) -> List[str]:
         else:
             tags.append("O")
     return tags
+
 
 class PersonExample(object):
     """
@@ -215,6 +219,19 @@ def read_data(file: str) -> List[LabeledSentence]:
             curr_tokens = []
             curr_bio_tags = []
     return sentences
+
+
+def transform_label_for_binary_classification(ner_exs: List[LabeledSentence]):
+    """
+    :param ner_exs: List of chunk-style NER examples
+    :return: A list of PersonExamples extracted from the NER data
+    """
+    for labeled_sent in ner_exs:
+        tags = bio_tags_from_chunks(labeled_sent.chunks, len(labeled_sent))
+        labels = [1 if tag.endswith("PER") else 0 for tag in tags]
+
+        yield PersonExample(labeled_sent.tokens,
+                            labels)
 
 
 def print_evaluation(gold_sentences: List[LabeledSentence], guess_sentences: List[LabeledSentence]):

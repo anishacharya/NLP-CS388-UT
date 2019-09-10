@@ -1,4 +1,4 @@
-from nerdata import *
+from data_utils.nerdata import *
 from collections import Counter
 
 
@@ -22,7 +22,7 @@ class CountBasedPersonClassifier(object):
             return 0
 
 
-def train_count_based_binary_classifier(ner_exs: List[PersonExample]):
+def train_count_based_binary_classifier(ner_exs: List[PersonExample]) -> CountBasedPersonClassifier:
     """
     :param ner_exs: training examples to build the count-based classifier from
     :return: A CountBasedPersonClassifier using counts collected from the given examples
@@ -35,7 +35,4 @@ def train_count_based_binary_classifier(ner_exs: List[PersonExample]):
                 pos_counts[ex.tokens[idx].word] += 1.0
             else:
                 neg_counts[ex.tokens[idx].word] += 1.0
-    print(repr(pos_counts))
-    print(repr(pos_counts["Peter"]))
-    print(repr(pos_counts["aslkdjtalk;sdjtakl"]))
     return CountBasedPersonClassifier(pos_counts, neg_counts)
