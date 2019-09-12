@@ -1,4 +1,4 @@
-from classifiers.baseline_classifier import *
+from classifiers.baseline_classifier import BaselineClassifier
 from classifiers.label_count_classifier import *
 
 from typing import List
@@ -22,6 +22,23 @@ def evaluate_classifier(exs: List[PersonExample], classifier: BaselineClassifier
             golds.append(ex.labels[idx])
             predictions.append(classifier.predict(ex.tokens, idx))
     print_evaluation(golds, predictions)
+
+
+def predict_write_output_to_file(exs: List[PersonExample], classifier: BaselineClassifier, outfile: str):
+    """
+    Runs prediction on exs and writes the outputs to outfile, one token per line
+    :param exs:
+    :param classifier:
+    :param outfile:
+    :return:
+    """
+    f = open(outfile, 'w')
+    for ex in exs:
+        for idx in range(0, len(ex)):
+            prediction = classifier.predict(ex.tokens, idx)
+            f.write(ex.tokens[idx].word + " " + repr(int(prediction)) + "\n")
+        f.write("\n")
+    f.close()
 
 
 def print_evaluation(golds: List[int], predictions: List[int]):
@@ -57,20 +74,3 @@ def print_evaluation(golds: List[int], predictions: List[int]):
     print("Precision: %i / %i = %f" % (num_pos_correct, num_pred, prec))
     print("Recall: %i / %i = %f" % (num_pos_correct, num_gold, rec))
     print("F1: %f" % f1)
-
-
-def predict_write_output_to_file(exs: List[PersonExample], classifier: BaselineClassifier, outfile: str):
-    """
-    Runs prediction on exs and writes the outputs to outfile, one token per line
-    :param exs:
-    :param classifier:
-    :param outfile:
-    :return:
-    """
-    f = open(outfile, 'w')
-    for ex in exs:
-        for idx in range(0, len(ex)):
-            prediction = classifier.predict(ex.tokens, idx)
-            f.write(ex.tokens[idx].word + " " + repr(int(prediction)) + "\n")
-        f.write("\n")
-    f.close()

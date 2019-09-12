@@ -2,22 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0960569c-090c-44c4-bd56-b106a2f978e4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Named_Entity_Recognition/feature_extractors/ner_features.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Named_Entity_Recognition/feature_extractors/ner_features.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifier_main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/baseline_classifier.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/label_count_classifier.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/eng.testa" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/eng.testb.blind" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/eng.train" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_utils/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_utils/nerdata.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/evaluation/ner_eval.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/feature_extractors/ner_features.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mini1.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/optimizers.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/utils.py" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/logistic_regression.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Named_Entity_Recognition.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Named_Entity_Recognition.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifier_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifier_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifiers/baseline_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/baseline_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluation/ner_eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluation/ner_eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/feature_extractors/ner_features.py" beforeDir="false" afterPath="$PROJECT_DIR$/feature_extractors/ner_features.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,60 +17,33 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/evaluation/ner_eval.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
-              <folding>
-                <element signature="e#0#45#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/classifier_main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="55" column="19" selection-start-line="55" selection-start-column="19" selection-end-line="55" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#34#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/classifiers/label_count_classifier.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="325">
-              <caret line="29" selection-start-line="29" selection-end-line="29" />
-              <folding>
-                <element signature="e#0#32#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/classifiers/baseline_classifier.py">
+        <entry file="file://$PROJECT_DIR$/evaluation/ner_eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="227">
-              <caret line="46" selection-start-line="46" selection-end-line="46" />
+            <state relative-caret-position="-572">
+              <caret line="1" column="33" selection-start-line="1" selection-start-column="33" selection-end-line="1" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/classifier_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="870">
+              <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="4" />
               <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#0#33#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/feature_extractors/ner_features.py">
+        <entry file="file://$PROJECT_DIR$/feature_extractors/ner_features.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
-              <caret line="21" column="98" selection-start-line="21" selection-start-column="98" selection-end-line="21" selection-end-column="98" />
+            <state relative-caret-position="510">
+              <caret line="34" column="38" selection-start-line="34" selection-start-column="38" selection-end-line="34" selection-end-column="38" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -88,13 +52,58 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/utils/utils.py">
+        <entry file="file://$PROJECT_DIR$/classifiers/baseline_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1109">
-              <caret line="75" selection-start-line="75" selection-end-line="75" />
+            <state relative-caret-position="1405">
+              <caret line="113" selection-start-line="113" selection-end-line="113" />
               <folding>
-                <element signature="e#12#35#0" expanded="true" />
+                <element signature="e#0#51#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/logistic_regression.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="493">
+              <caret line="47" column="57" selection-start-line="47" selection-start-column="57" selection-end-line="47" selection-end-column="57" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/testing_toy.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="512">
+              <caret line="63" selection-start-line="63" selection-end-line="63" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/classifiers/label_count_classifier.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+              <folding>
+                <element signature="e#0#32#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data_utils/nerdata.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1438">
+              <caret line="193" selection-start-line="193" selection-end-line="193" />
             </state>
           </provider>
         </entry>
@@ -127,12 +136,15 @@
         <option value="$PROJECT_DIR$/classifiers/label_count_classifier.py" />
         <option value="$PROJECT_DIR$/classifiers/__init__.py" />
         <option value="$PROJECT_DIR$/data_utils/__init__.py" />
-        <option value="$PROJECT_DIR$/classifier_main.py" />
-        <option value="$PROJECT_DIR$/evaluation/ner_eval.py" />
+        <option value="$PROJECT_DIR$/testing_toy.py" />
         <option value="$PROJECT_DIR$/feature_extractors/ner_features.py" />
+        <option value="$PROJECT_DIR$/feature_extractors/ner_features.py" />
+        <option value="$PROJECT_DIR$/classifier_main.py" />
+        <option value="$PROJECT_DIR$/evaluation/__init__.py" />
+        <option value="$PROJECT_DIR$/models/logistic_regression.py" />
         <option value="$PROJECT_DIR$/classifiers/baseline_classifier.py" />
-        <option value="$PROJECT_DIR$/../Named_Entity_Recognition/classifiers/baseline_classifier.py" />
-        <option value="$PROJECT_DIR$/../Named_Entity_Recognition/feature_extractors/ner_features.py" />
+        <option value="$PROJECT_DIR$/classifiers/baseline_classifier.py" />
+        <option value="$PROJECT_DIR$/evaluation/ner_eval.py" />
       </list>
     </option>
   </component>
@@ -140,14 +152,15 @@
     <option name="files">
       <list>
         <option value="$PROJECT_DIR$/.idea/modules.xml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-1525" />
-    <option name="y" value="-277" />
-    <option name="width" value="1525" />
-    <option name="height" value="1040" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-1861" />
+    <option name="y" value="-52" />
+    <option name="width" value="1920" />
+    <option name="height" value="1177" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -166,6 +179,31 @@
               <item name="simple_ner" type="b2602c69:ProjectViewProjectNode" />
               <item name="Named_Entity_Recognition" type="462c0819:PsiDirectoryNode" />
               <item name="classifiers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="simple_ner" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Named_Entity_Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="simple_ner" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Named_Entity_Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="data_utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="simple_ner" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Named_Entity_Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="evaluation" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="simple_ner" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Named_Entity_Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="feature_extractors" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="simple_ner" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Named_Entity_Recognition" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -196,7 +234,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.classifier_main (1)">
+  <component name="RunManager" selected="Python.classifier_main">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="Named_Entity_Recognition" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -226,11 +264,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../Named_Entity_Recognition" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../Named_Entity_Recognition/classifier_main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/classifier_main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -252,6 +290,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/classifier_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="testing_toy" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Named_Entity_Recognition" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testing_toy.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -305,8 +364,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.classifier_main (1)" />
         <item itemvalue="Python.classifier_main" />
+        <item itemvalue="Python.testing_toy" />
+        <item itemvalue="Python.classifier_main (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -323,32 +383,69 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-1525" y="-277" width="1525" height="1040" extended-state="0" />
+    <frame x="-1920" y="-277" width="1920" height="1177" extended-state="6" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27107215" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1256656" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Python Console" />
-      <window_info anchor="bottom" id="Terminal" weight="0.43248945" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3299539" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.39262673" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.37869197" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.7428115" visible="true" weight="0.43317974" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="R Packages" />
-      <window_info anchor="right" id="R Graphics" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3299539" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3299539" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.26635945" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.2571885" side_tool="true" weight="0.49308756" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49966285" weight="0.32911393" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="R Graphics" order="3" />
+      <window_info anchor="right" id="R Packages" order="4" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1256656" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3299539" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.39262673" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.7428115" visible="true" weight="0.16866359" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3299539" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3299539" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.26635945" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.2571885" side_tool="true" weight="0.49308756" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49966285" weight="0.32911393" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="R Graphics" order="3" />
+      <window_info anchor="right" id="R Packages" order="4" />
+    </layout-to-restore>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/testing_toy.py</url>
+          <line>63</line>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -366,67 +463,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/__init__.py">
+    <entry file="file://$PROJECT_DIR$/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/data/eng.testa">
+    <entry file="file://$PROJECT_DIR$/data/eng.testa">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/eng.testb.out">
+    <entry file="file://$PROJECT_DIR$/eng.testb.out" />
+    <entry file="file://$PROJECT_DIR$/data/eng.testb.blind">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/data/eng.testb.blind">
+    <entry file="file://$PROJECT_DIR$/data_utils/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/data_utils/__init__.py">
+    <entry file="file://$PROJECT_DIR$/classifiers/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/classifiers/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/utils/optimizers.py">
+    <entry file="file://$PROJECT_DIR$/utils/optimizers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="526">
           <caret line="105" column="109" selection-start-line="105" selection-start-column="109" selection-end-line="105" selection-end-column="109" />
           <folding>
             <element signature="e#17#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/utils/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1109">
-          <caret line="75" selection-start-line="75" selection-end-line="75" />
-          <folding>
-            <element signature="e#12#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/classifier_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="55" column="19" selection-start-line="55" selection-start-column="19" selection-end-line="55" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/data/eng.train">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="8" column="21" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/classifiers/label_count_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="29" selection-start-line="29" selection-end-line="29" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -438,40 +496,118 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/evaluation/ner_eval.py">
+    <entry file="file://$PROJECT_DIR$/utils/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
+        <state relative-caret-position="270">
+          <caret line="75" selection-start-line="75" selection-end-line="75" />
           <folding>
-            <element signature="e#0#45#0" expanded="true" />
+            <element signature="e#12#35#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/data_utils/nerdata.py">
+    <entry file="file://$PROJECT_DIR$/data/eng.train">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
+        <state relative-caret-position="100">
+          <caret line="8" column="21" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/Cellar/python/3.7.4/Frameworks/Python.framework/Versions/3.7/lib/python3.7/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="309" selection-start-line="309" selection-end-line="309" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python3.7/site-packages/torch/nn/functional.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="1368" selection-start-line="1368" selection-end-line="1368" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python3.7/site-packages/torch/nn/modules/linear.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="291">
+          <caret line="95" column="62" selection-start-line="95" selection-start-column="62" selection-end-line="95" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing_toy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="63" selection-start-line="63" selection-end-line="63" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/evaluation/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/logistic_regression.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="47" column="57" selection-start-line="47" selection-start-column="57" selection-end-line="47" selection-end-column="57" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classifiers/label_count_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/nerdata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1438">
           <caret line="193" selection-start-line="193" selection-end-line="193" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/feature_extractors/ner_features.py">
+    <entry file="file://$PROJECT_DIR$/classifiers/baseline_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="21" column="98" selection-start-line="21" selection-start-column="98" selection-end-line="21" selection-end-column="98" />
+        <state relative-caret-position="1405">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
+          <folding>
+            <element signature="e#0#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_extractors/ner_features.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="34" column="38" selection-start-line="34" selection-start-column="38" selection-end-line="34" selection-end-column="38" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Named_Entity_Recognition/classifiers/baseline_classifier.py">
+    <entry file="file://$PROJECT_DIR$/classifier_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
+        <state relative-caret-position="870">
+          <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="4" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#33#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/evaluation/ner_eval.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-572">
+          <caret line="1" column="33" selection-start-line="1" selection-start-column="33" selection-end-line="1" selection-end-column="33" />
         </state>
       </provider>
     </entry>

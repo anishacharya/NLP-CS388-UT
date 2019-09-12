@@ -48,7 +48,7 @@ if __name__ == '__main__':
     if args.model == "BAD":
         classifier = run_count_based_binary_ner(train_class_exs)
     else:
-        classifier = run_model_based_binary_ner(train_class_exs)
+        classifier = run_model_based_binary_ner(train_class_exs, dev_class_exs)
 
     print("Data reading and training took %f seconds" % (time.time() - start_time))
     # Evaluate on training, development, and test data
