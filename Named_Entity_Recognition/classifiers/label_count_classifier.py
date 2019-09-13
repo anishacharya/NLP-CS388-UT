@@ -27,7 +27,7 @@ class CountBasedPersonClassifier(object):
             return 0
 
 
-def run_count_based_binary_ner(ner_exs: List[PersonExample]) -> CountBasedPersonClassifier:
+def train_count_based_binary_ner(ner_exs: List[PersonExample]) -> CountBasedPersonClassifier:
     """
     :param ner_exs: training examples to build the count-based classifier from
     :return: A CountBasedPersonClassifier using counts collected from the given examples

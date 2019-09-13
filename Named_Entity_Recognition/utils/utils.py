@@ -9,6 +9,23 @@ Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
 """
 
 
+def flatten(lst):
+    """Flattens a list of lists"""
+    return [sub_elem for elem in lst
+            for sub_elem in elem]
+
+
+def sigmoid(z):
+    return 1 / (1 + np.e ** (-z))
+
+
+def logistic_regression_loss_imbalanced(y_true, y_hat, alpha=1):
+    t1 = alpha * y_true * np.log(y_hat + 10e-5)
+    t2 = (1 - y_true) * np.log(1 - y_hat + 10e-5)
+
+    return -np.sum(t1 + t2)
+
+
 class Indexer(object):
     """
     Bijection between objects and integers starting at 0. Useful for mapping
@@ -18,6 +35,7 @@ class Indexer(object):
         objs_to_ints
         ints_to_objs
     """
+
     def __init__(self):
         self.objs_to_ints = {}
         self.ints_to_objs = {}
@@ -67,12 +85,12 @@ class Indexer(object):
         """
         if not add:
             return self.index_of(object)
-        
+
         if object not in self.objs_to_ints:
             new_idx = len(self.objs_to_ints)
             self.objs_to_ints[object] = new_idx
             self.ints_to_objs[new_idx] = object
-        
+
         return self.objs_to_ints[object]
 
 
@@ -82,6 +100,7 @@ class Beam(object):
     elements after every insertion operation. Insertion is O(n) (list is maintained in
     sorted order), access is O(1). Still fast enough for practical purposes for small beams.
     """
+
     def __init__(self, size):
         self.size = size
         self.elts = []

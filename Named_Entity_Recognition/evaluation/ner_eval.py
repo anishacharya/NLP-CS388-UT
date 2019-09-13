@@ -1,4 +1,4 @@
-from classifiers.baseline_classifier import BaselineClassifier
+from classifiers.ner_classifier import BaselineNERClassifier
 from classifiers.label_count_classifier import *
 
 from typing import List
@@ -9,7 +9,7 @@ Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
 """
 
 
-def evaluate_classifier(exs: List[PersonExample], classifier: BaselineClassifier):
+def evaluate_classifier(exs: List[PersonExample], classifier: BaselineNERClassifier):
     """
     Prints evaluation of the classifier on the given examples
     :param exs: PersonExample instances to run on
@@ -24,7 +24,7 @@ def evaluate_classifier(exs: List[PersonExample], classifier: BaselineClassifier
     print_evaluation(golds, predictions)
 
 
-def predict_write_output_to_file(exs: List[PersonExample], classifier: BaselineClassifier, outfile: str):
+def predict_write_output_to_file(exs: List[PersonExample], classifier: BaselineNERClassifier, outfile: str):
     """
     Runs prediction on exs and writes the outputs to outfile, one token per line
     :param exs:

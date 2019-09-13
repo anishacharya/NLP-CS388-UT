@@ -1,8 +1,7 @@
 from evaluation.ner_eval import *
 from classifiers.label_count_classifier import *
-from classifiers.baseline_classifier import *
 from data_utils.nerdata import *
-
+from classifiers.ner_classifier import train_model_based_ner
 import argparse
 import time
 
@@ -46,9 +45,9 @@ if __name__ == '__main__':
 
     # Train the model
     if args.model == "BAD":
-        classifier = run_count_based_binary_ner(train_class_exs)
+        classifier = train_count_based_binary_ner(train_class_exs)
     else:
-        classifier = run_model_based_binary_ner(train_class_exs, dev_class_exs)
+        classifier = train_model_based_ner(train_class_exs)
 
     print("Data reading and training took %f seconds" % (time.time() - start_time))
     # Evaluate on training, development, and test data
