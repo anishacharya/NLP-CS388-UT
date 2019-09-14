@@ -8,7 +8,10 @@ import torch.nn as nn
 from data_utils.nerdata import PersonExample
 from feature_extractors.utils import create_index, load_word_embedding
 from feature_extractors.embedding_features import word_embedding
-from feature_extractors.ner_features import is_upper_indicator_feat
+from feature_extractors.ner_features import is_upper_indicator_feat, \
+    word_indicator_feat, \
+    pos_indicator_feat, \
+    all_caps_indicator_feat
 from utils.utils import Indexer, flatten
 
 glove_file = '/Users/anishacharya/Desktop/PhD_1_1/NLP/CS388/Named_Entity_Recognition/data/glove.6B/glove.6B.300d.txt'
@@ -35,14 +38,14 @@ class BaselineNERClassifier(object):
         """
         token = tokens[idx]
 
-        # Word Indicator
-        word_indicator_feat_dim = len(self.word_ix)
-        word_indicator = [0] * word_indicator_feat_dim
-        if token.word.lower() in self.word_ix.objs_to_ints:
-            ix = self.word_ix.objs_to_ints[token.word.lower()]
-            word_indicator[ix] = 1
-        else:
-            word_indicator[self.word_ix.objs_to_ints['__UNK__']] = 1
+        # # Word Indicator
+        # word_indicator_feat_dim = len(self.word_ix)
+        # word_indicator = [0] * word_indicator_feat_dim
+        # if token.word.lower() in self.word_ix.objs_to_ints:
+        #     ix = self.word_ix.objs_to_ints[token.word.lower()]
+        #     word_indicator[ix] = 1
+        # else:
+        #     word_indicator[self.word_ix.objs_to_ints['__UNK__']] = 1
 
         # pos indicator
         pos_indicator_feat_dim = len(self.pos_ix)
@@ -54,9 +57,9 @@ class BaselineNERClassifier(object):
             pos_indicator[self.pos_ix.objs_to_ints['__UNK__']] = 1
 
         # starts with a capital
-        is_upper = [0]
-        if idx != 0 and token.word[0].isupper:
-            is_upper[0] = 1
+        is_upper = is_upper_indicator_feat(word=token.word, idx=idx)
+        # all caps
+        is_all_caps = all_caps_indicator_feat(word=token.word)
 
         # word Embedding
         if token.word.lower() in self.word_ix.objs_to_ints:
@@ -72,6 +75,7 @@ class BaselineNERClassifier(object):
         # feat_vec = feat_vec + word_indicator
         feat_vec = feat_vec + pos_indicator
         feat_vec = feat_vec + is_upper
+        feat_vec = feat_vec + is_all_caps
 
         feat_vec = feat_vec + word_emb
 
@@ -92,20 +96,13 @@ def get_features(sentence: List,
 
     word = word_ix.ints_to_objs[sentence[idx]]
 
-    # collect 1-hot of word
-    word_indicator_feat_dim = len(word_ix)
-    word_indicator = [0] * word_indicator_feat_dim
-    word_indicator[sentence[idx]] = 1
-
-    # collect POS
-    pos_indicator_feat_dim = len(pos_ix)
-    pos_indicator = [0] * pos_indicator_feat_dim
-    pos_indicator[pos[idx]] = 1
-
-    # check if word starts with capital and not first word
+    # collect 1-hot / Indicator Features
+    # word_indicator = word_indicator_feat(sentence=sentence, word_ix=word_ix, idx=idx)
+    pos_indicator = pos_indicator_feat(pos=pos, pos_ix=pos_ix, idx=idx)
     is_upper_indicator = is_upper_indicator_feat(word=word, idx=idx)
+    all_caps_indicator = all_caps_indicator_feat(word=word)
 
-    # collect word embedding
+    # collect word embedding features
     word_embed = word_embedding(word=word,
                                 ix2embed=embed_ix,
                                 word2ix=word_ix.objs_to_ints)
@@ -118,6 +115,7 @@ def get_features(sentence: List,
     # feature = feature + word_indicator
     feature = feature + pos_indicator
     feature = feature + is_upper_indicator
+    feature = feature + all_caps_indicator
 
     feature = feature + word_embed
 
@@ -135,11 +133,10 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
                                        word2index_vocab=word_ix.objs_to_ints)
     train_sent, POS, train_lables = index_data(ner_exs, word_ix, pos_ix)
 
-    epochs = 15
+    epochs = 20
     batch_size = 64
     initial_lr = 0.01
     no_of_classes = 2
-    print_iter = 15
 
     """
     ==================================
@@ -149,6 +146,8 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
     word_indicator_feat_dim = len(word_ix)
     pos_indicator_feat_dim = len(pos_ix)
     is_upper_feat_dim = 1
+    all_caps_indicator_feat_dim = 1
+
     word_embedding_feat_dim = 300
 
     feat_dim = 0
@@ -156,11 +155,12 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
     # feat_dim += word_indicator_feat_dim
     feat_dim += pos_indicator_feat_dim
     feat_dim += is_upper_feat_dim
+    feat_dim += all_caps_indicator_feat_dim
 
     feat_dim += word_embedding_feat_dim
 
     n_input_dim = feat_dim
-    n_hidden1 = 16  # Number of hidden nodes
+    n_hidden1 = 8  # Number of hidden nodes
     n_hidden2 = 4
     n_output = 2  # Number of output nodes = for binary classifier
 
@@ -201,11 +201,9 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
             pos_weight = torch.ones([no_of_classes])
             pos_weight[1] = scaling
             optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
-            # loss_func = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-            loss_func = nn.BCELoss()
+            loss_func = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
             Y_train = np.asarray(Y_train)
-
             X_train = []
             for sent, pos in zip(data_batch, pos_batch):
                 for idx in range(0, len(sent)):
@@ -232,17 +230,15 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
             optimizer.step()
             optimizer.zero_grad()
 
-        if epoch % print_iter == 0:
-            print("Epoch : ", epoch)
-            print('Loss ==> ', loss.item())
-
+        print("Epoch : ", epoch)
+        print("Learning Rate = ", learning_rate)
+        print("----------")
         evaluate_classifier(dev_data, BaselineNERClassifier(model=net,
                                                             word_ix=word_ix,
                                                             pos_ix=pos_ix,
                                                             ix2embed=ix2embedding))
-        learning_rate = learning_rate/2
-        if epoch%5 == 0:
-            learning_rate = initial_lr
+        if (epoch+1) % 5 == 0:
+            learning_rate = initial_lr/2
 
     return BaselineNERClassifier(model=net,
                                  word_ix=word_ix,
