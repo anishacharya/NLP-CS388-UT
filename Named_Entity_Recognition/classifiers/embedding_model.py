@@ -1,14 +1,16 @@
-from data_utils.nerdata import PersonExample
-from utils.utils import Indexer, flatten
-from feature_extractors.feature_extractor import create_index
-from models.logistic_regression import LogisticRegression
-
-import torch
 from random import shuffle
 from typing import List
+
 import numpy as np
-from scipy.sparse import csr_matrix, vstack
+import torch
 import torch.nn as nn
+
+from data_utils.nerdata import PersonExample
+from feature_extractors.utils import create_index
+from utils.utils import Indexer, flatten
+
+
+glove_file = '/Users/anishacharya/Desktop/PhD_1_1/NLP/CS388/Named_Entity_Recognition/data/glove.6B/glove.6B.300d.txt'
 
 
 class BaselineNERClassifier(object):
@@ -32,41 +34,36 @@ class BaselineNERClassifier(object):
         token = tokens[idx]
 
         word_indicator_feat_dim = len(self.word_ix)
-        pos_indicator_feat_dim = len(self.pos_ix)
-        is_upper_feat_dim = 1
-
         word_indicator = [0] * word_indicator_feat_dim
-        pos_indicator = [0] * pos_indicator_feat_dim
-        is_upper = [0]
-
         if token.word in self.word_ix.objs_to_ints:
             ix = self.word_ix.objs_to_ints[token.word]
             word_indicator[ix] = 1
         else:
             word_indicator[self.word_ix.objs_to_ints['__UNK__']] = 1
 
+        pos_indicator_feat_dim = len(self.pos_ix)
+        pos_indicator = [0] * pos_indicator_feat_dim
         if token.pos in self.pos_ix.objs_to_ints:
             ix = self.pos_ix.objs_to_ints[token.pos]
             pos_indicator[ix] = 1
         else:
             pos_indicator[self.pos_ix.objs_to_ints['__UNK__']] = 1
 
-        if token.word[0].isupper:
+        is_upper = [0]
+        if idx != 0 and token.word[0].isupper:
             is_upper[0] = 1
 
-        feat_vec = word_indicator
-        feat_vec.append(pos_indicator)
-        feat_vec.append(is_upper)
+        feat_vec = []
+        feat_vec = feat_vec + word_indicator
+        feat_vec = feat_vec + pos_indicator
+        feat_vec = feat_vec + is_upper
 
         x_test = torch.FloatTensor(feat_vec)
         y_hat_test = self.model(x_test)
-        # print(y_hat_test)
+
         if y_hat_test[0] > y_hat_test[1]:
             return 0
         return 1
-        # y_hat_test_class = y_hat_test.index(max(y_hat_test))
-        # y_hat_test_class = np.where(y_hat_test.detach().numpy() < 0.5, 0, 1)
-        # return y_hat_test_class
 
 
 def get_features(sentence, pos, word_ix, pos_ix, idx):
@@ -74,8 +71,6 @@ def get_features(sentence, pos, word_ix, pos_ix, idx):
     word_indicator_feat_dim = len(word_ix)
     word_indicator = [0] * word_indicator_feat_dim
     word_indicator[sentence[idx]] = 1
-    # word_indicator = np.zeros((1, word_indicator_feat_dim))
-    # word_indicator[0, sentence[idx]] = 1
 
     # collect POS
     pos_indicator_feat_dim = len(pos_ix)
@@ -85,18 +80,16 @@ def get_features(sentence, pos, word_ix, pos_ix, idx):
     # check if word starts with capital
     is_upper_indicator = [0]
     word = word_ix.ints_to_objs[sentence[idx]]
-    if word[0].isupper:
+    if idx !=0 and word[0].isupper:
         is_upper_indicator[0] = 1
 
     # collect embedding
 
-    feature = word_indicator
-    feature.append(pos_indicator)
-    feature.append(is_upper_indicator)
-
-    # feature = pos_indicator
-    # feature = word_indicator
-    # feature = is_upper_indicator
+    # gather all features
+    feature = []
+    feature = feature + word_indicator
+    feature = feature + pos_indicator
+    feature = feature + is_upper_indicator
 
     return feature
 
@@ -104,10 +97,11 @@ def get_features(sentence, pos, word_ix, pos_ix, idx):
 def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
     shuffle(ner_exs)
     word_ix, pos_ix = create_index(ner_exs)
+
     train_sent, POS, train_lables = index_data(ner_exs, word_ix, pos_ix)
 
-    epochs = 1
-    batch_size = 100
+    epochs = 15
+    batch_size = 124
     print_iter = 15
     no_of_classes = 2
 
@@ -119,13 +113,12 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
     pos_indicator_feat_dim = len(pos_ix)
     is_upper_feat_dim = 1
 
-    feat_dim = word_indicator_feat_dim + \
-               pos_indicator_feat_dim + \
-               is_upper_feat_dim
+    feat_dim = 0
+    feat_dim += word_indicator_feat_dim
+    feat_dim += pos_indicator_feat_dim
+    feat_dim += is_upper_feat_dim
 
-    # Define network dimensions
     n_input_dim = feat_dim
-    # Layer size
     n_hidden = 4  # Number of hidden nodes
     n_output = 2  # Number of output nodes = for binary classifier
 
@@ -153,16 +146,18 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
                 pos_batch = POS[i: i + batch_size]
 
             Y_train = flatten(train_lables[i: i + batch_size])
-            if 1 not in Y_train:
-                print('discarding batch since no pos class')
-                continue
-            print('processing batch = ', i/100)
+            if i/100 % print_iter == 0:
+                print('processing batch = ', i/100)
 
             """
             ========== scaling ================== 
             """
             # compute class weights
-            scaling = Y_train.count(0) / Y_train.count(1)
+            if Y_train.count(1) == 0:
+                scaling = 1
+            else:
+                scaling = Y_train.count(0) / Y_train.count(1)
+
             pos_weight = torch.ones([no_of_classes])
             pos_weight[1] = scaling
 
@@ -185,7 +180,7 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
                     y_train_one_hot[ix, 1] = 1
             Y_train = y_train_one_hot
 
-            # convert to tensors
+            # convert to tensor
             X_train_t = torch.FloatTensor(X_train)
             Y_train_t = torch.FloatTensor(Y_train)
 
