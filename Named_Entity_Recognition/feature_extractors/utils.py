@@ -23,7 +23,7 @@ def create_index(ner_exs: List[PersonExample]) -> [Indexer, Indexer]:
             token = ex.tokens[idx].word
             pos = ex.tokens[idx].pos
             if token not in stops:
-                word_ix.add_and_get_index(token)
+                word_ix.add_and_get_index(token.lower())
             if pos not in stops:
                 pos_ix.add_and_get_index(pos)
 
@@ -44,8 +44,8 @@ def load_word_embedding(pretrained_embedding_filename, word2index_vocab):
             if ix is not None:
                 representation = split[1:]
                 representation = np.array([float(val) for val in representation])
-                index_to_embedding[ix] = representation
-    unk = word2index_vocab['_UNK']
+                index_to_embedding[ix] = list(representation)
+    unk = word2index_vocab['__UNK__']
     index_to_embedding[unk] = [0.0] * len(representation)  # Empty representation for unknown words.
 
     return index_to_embedding

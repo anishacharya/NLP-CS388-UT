@@ -1,5 +1,5 @@
 from random import shuffle
-from typing import List
+from typing import List, Dict
 
 import numpy as np
 import torch
@@ -8,6 +8,7 @@ import torch.nn as nn
 from data_utils.nerdata import PersonExample
 from feature_extractors.utils import create_index
 from utils.utils import Indexer, flatten
+from feature_extractors.utils import load_word_embedding
 
 
 glove_file = '/Users/anishacharya/Desktop/PhD_1_1/NLP/CS388/Named_Entity_Recognition/data/glove.6B/glove.6B.300d.txt'
@@ -19,10 +20,11 @@ class BaselineNERClassifier(object):
     Constructor arguments are merely suggestions; you're free to change these.
     """
 
-    def __init__(self, model, word_ix: Indexer, pos_ix: Indexer):
+    def __init__(self, model, word_ix: Indexer, pos_ix: Indexer, ix2embed: Dict):
         self.model = model
         self.word_ix = word_ix
         self.pos_ix = pos_ix
+        self.ix2embed = ix2embed
 
     def predict(self, tokens: List[str], idx: int):
         """
@@ -33,14 +35,16 @@ class BaselineNERClassifier(object):
         """
         token = tokens[idx]
 
+        # Word Indicator
         word_indicator_feat_dim = len(self.word_ix)
         word_indicator = [0] * word_indicator_feat_dim
-        if token.word in self.word_ix.objs_to_ints:
-            ix = self.word_ix.objs_to_ints[token.word]
+        if token.word.lower() in self.word_ix.objs_to_ints:
+            ix = self.word_ix.objs_to_ints[token.word.lower()]
             word_indicator[ix] = 1
         else:
             word_indicator[self.word_ix.objs_to_ints['__UNK__']] = 1
 
+        # pos indicator
         pos_indicator_feat_dim = len(self.pos_ix)
         pos_indicator = [0] * pos_indicator_feat_dim
         if token.pos in self.pos_ix.objs_to_ints:
@@ -49,14 +53,27 @@ class BaselineNERClassifier(object):
         else:
             pos_indicator[self.pos_ix.objs_to_ints['__UNK__']] = 1
 
+        # starts with a capital
         is_upper = [0]
         if idx != 0 and token.word[0].isupper:
             is_upper[0] = 1
 
+        # word Embedding
+        if token.word.lower() in self.word_ix.objs_to_ints:
+            token_ix = self.word_ix.objs_to_ints[token.word.lower()]
+        else:
+            token_ix = self.word_ix.objs_to_ints['__UNK__']
+        if token_ix in self.ix2embed:
+            word_emb = self.ix2embed[token_ix]
+        else:
+            word_emb = self.ix2embed[self.word_ix.objs_to_ints['__UNK__']]
+
         feat_vec = []
-        feat_vec = feat_vec + word_indicator
-        feat_vec = feat_vec + pos_indicator
-        feat_vec = feat_vec + is_upper
+        # feat_vec = feat_vec + word_indicator
+        # feat_vec = feat_vec + pos_indicator
+        # feat_vec = feat_vec + is_upper
+
+        feat_vec = feat_vec + word_emb
 
         x_test = torch.FloatTensor(feat_vec)
         y_hat_test = self.model(x_test)
@@ -66,7 +83,12 @@ class BaselineNERClassifier(object):
         return 1
 
 
-def get_features(sentence, pos, word_ix, pos_ix, idx):
+def get_features(sentence,
+                 pos,
+                 word_ix,
+                 pos_ix,
+                 embed_ix,
+                 idx):
     # collect 1-hot of word
     word_indicator_feat_dim = len(word_ix)
     word_indicator = [0] * word_indicator_feat_dim
@@ -80,43 +102,62 @@ def get_features(sentence, pos, word_ix, pos_ix, idx):
     # check if word starts with capital
     is_upper_indicator = [0]
     word = word_ix.ints_to_objs[sentence[idx]]
-    if idx !=0 and word[0].isupper:
+    if idx != 0 and word[0].isupper:
         is_upper_indicator[0] = 1
 
-    # collect embedding
+    # collect word embedding
+    if sentence[idx] in embed_ix.keys():
+        word_embed = embed_ix[sentence[idx]]
+    else:
+        word_embed = embed_ix[word_ix.objs_to_ints['__UNK__']]
+
+    # word_embed = list(word_embed)
 
     # gather all features
     feature = []
-    feature = feature + word_indicator
-    feature = feature + pos_indicator
-    feature = feature + is_upper_indicator
+
+    # feature = feature + word_indicator
+    # feature = feature + pos_indicator
+    # feature = feature + is_upper_indicator
+
+    feature = feature + word_embed
 
     return feature
 
 
 def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
     shuffle(ner_exs)
+    """
+    =======================================
+    ========== Build Indexers =============
+    """
     word_ix, pos_ix = create_index(ner_exs)
-
+    ix2embedding = load_word_embedding(pretrained_embedding_filename=glove_file,
+                                       word2index_vocab=word_ix.objs_to_ints)
     train_sent, POS, train_lables = index_data(ner_exs, word_ix, pos_ix)
 
     epochs = 15
-    batch_size = 124
+    batch_size = 64
     print_iter = 15
     no_of_classes = 2
 
     """
-    ===============================================
-    =====  Network Definition ===================== 
+    ==================================
+    =====  Network Definition ========
+    ==================================
     """
     word_indicator_feat_dim = len(word_ix)
     pos_indicator_feat_dim = len(pos_ix)
     is_upper_feat_dim = 1
+    word_embedding_feat_dim = 300
 
     feat_dim = 0
-    feat_dim += word_indicator_feat_dim
-    feat_dim += pos_indicator_feat_dim
-    feat_dim += is_upper_feat_dim
+
+    # feat_dim += word_indicator_feat_dim
+    # feat_dim += pos_indicator_feat_dim
+    # feat_dim += is_upper_feat_dim
+
+    feat_dim += word_embedding_feat_dim
 
     n_input_dim = feat_dim
     n_hidden = 4  # Number of hidden nodes
@@ -168,7 +209,7 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
             X_train = []
             for sent, pos in zip(data_batch, pos_batch):
                 for idx in range(0, len(sent)):
-                    X_train.append(get_features(sent, pos, word_ix, pos_ix, idx))
+                    X_train.append(get_features(sent, pos, word_ix, pos_ix, ix2embedding, idx))
             X_train = np.asarray(X_train)
 
             # One hot
@@ -194,9 +235,16 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
             if i/100 % print_iter == 0:
                 print('Loss ==> ', loss.item())
 
-        evaluate_classifier(dev_data, BaselineNERClassifier(model=net, word_ix=word_ix, pos_ix=pos_ix))
+        evaluate_classifier(dev_data, BaselineNERClassifier(model=net,
+                                                            word_ix=word_ix,
+                                                            pos_ix=pos_ix,
+                                                            ix2embed=ix2embedding))
         learning_rate = learning_rate/2
-    return BaselineNERClassifier(model=net, word_ix=word_ix, pos_ix=pos_ix)
+
+    return BaselineNERClassifier(model=net,
+                                 word_ix=word_ix,
+                                 pos_ix=pos_ix,
+                                 ix2embed=ix2embedding)
 
 
 def index_data(ner_exs: List[PersonExample], word_ix, pos_ix):
@@ -210,10 +258,11 @@ def index_data(ner_exs: List[PersonExample], word_ix, pos_ix):
         pos = []
         indexed_y.append(sent.labels)
         for token in sent.tokens:
-            if token.word in word_ix.objs_to_ints:
-                s.append(word_ix.objs_to_ints[token.word])
+            if token.word.lower() in word_ix.objs_to_ints:
+                s.append(word_ix.objs_to_ints[token.word.lower()])
             else:
                 s.append(word_ix.objs_to_ints['__UNK__'])
+
             if token.pos in pos_ix.objs_to_ints:
                 pos.append(pos_ix.objs_to_ints[token.pos])
             else:
