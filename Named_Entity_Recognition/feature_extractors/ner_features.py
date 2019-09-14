@@ -4,6 +4,7 @@ from utils.utils import Indexer, flatten
 from nltk.corpus import stopwords
 from string import punctuation
 from typing import List
+import io
 """
 Author: Anish Acharya <anishacharya@utexas.edu>
 """
@@ -38,6 +39,11 @@ class Feature:
         self.feature = feature
         self.size = size
 
+def create_embedding_map(word_ix):
+    embedding_map = {}
+    for token in word_ix.objs_to_ints:
+        embedding_map[token]
+
 
 def sparse_feature_encoder(ner_exs: List[PersonExample],
                            word_ix: Indexer,
@@ -45,6 +51,7 @@ def sparse_feature_encoder(ner_exs: List[PersonExample],
     projector = NERFeatureExtractors(word_index=word_ix,
                                      pos_index=pos_ix)
 
+    # Declare for all the 1-hot features you wish to use
     x_train_uni = []
     x_train_pos = []
 
@@ -60,7 +67,8 @@ def sparse_feature_encoder(ner_exs: List[PersonExample],
         y_train = np.concatenate((y_train, y))
 
     # wrap in Feature class combine all features into one list to return
-    features = [Feature(x_train_uni, len(word_ix)), Feature(x_train_pos, len(pos_ix))]
+    features = [Feature(x_train_uni, len(word_ix)),
+                Feature(x_train_pos, len(pos_ix))]
     return features, y_train
 
 
@@ -69,7 +77,7 @@ def sparse_feature_decoder(encoded_feature):
     for feat in encoded_feature:
         feat_dim += feat.size
     token_count = len(flatten(encoded_feature[0].feature))
-    decoded_feat = np.empty((token_count, feat_dim))
+    decoded_feat = np.zeros((token_count, feat_dim))
 
     # also append the ix of non-zero terms for sparse gradient updates
     non_zero_grad_loc = [[] for i in range(token_count)]
@@ -87,25 +95,14 @@ def sparse_feature_decoder(encoded_feature):
     return decoded_feat, non_zero_grad_loc
 
 
-# def project_to_continuous_space(ner_exs: List[PersonExample],
-#                                 word_ix: Indexer,
-#                                 pos_ix: Indexer):
-#     # instance of the feature extractor
-#     projector = NERFeatureExtractors(word_index=word_ix,
-#                                      pos_index=pos_ix)
-#     x_train = np.empty((0, projector.feature_dim))
-#     y_train = []
-#     for ner_ex in ner_exs:
-#         y = ner_ex.labels
-#         x1 = projector.uni_gram_index_feature(ner_ex=ner_ex)
-#         x2 = projector.pos_index_feature(ner_ex=ner_ex)
-#
-#         x_train = np.concatenate((x_train, x1), axis=0)
-#         x_train = np.concatenate((x_train, x2), axis=0)
-#
-#         y_train = np.concatenate((y_train, y))
-#
-#     return x_train, y_train
+def load_embedding(fname):
+    fin = io.open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
+    n, d = map(int, fin.readline().split())
+    data = {}
+    for line in fin:
+        tokens = line.rstrip().split(' ')
+        data[tokens[0]] = map(float, tokens[1:])
+    return data
 
 
 class NERFeatureExtractors:
@@ -145,19 +142,6 @@ class NERFeatureExtractors:
             x.append(j)
         return x
 
-    # def uni_gram_index_feature(self,
-    #                            ner_ex: PersonExample):
-    #     """
-    #     :return: a |V| dim vector A per word with A[i] = 1 if index(wi) = i, the corresponding label
-    #     so if there are n tokens return x = n * feature_dim , Y = n
-    #     """
-    #     x = np.zeros((len(ner_ex), self.unigram_feat_dim))
-    #
-    #     for idx in range(0, len(ner_ex)):
-    #         token = ner_ex.tokens[idx]
-    #         x[idx, :] = self.uni_gram_index_feature_per_token(token)
-    #     return x
-
     def uni_gram_index_feature_per_token(self, token):
         x = np.zeros([1, self.unigram_feat_dim])
         if token.word not in self.word_ix.objs_to_ints:
@@ -166,18 +150,6 @@ class NERFeatureExtractors:
             j = self.word_ix.objs_to_ints[token.word]
         x[:, j] = 1
         return x
-
-    # def pos_index_feature(self,
-    #                       ner_ex: PersonExample):
-    #     """
-    #     :return: if n unique POS in the training data then returns a n dim vector B, the corresponding label
-    #     for wi where B[i]=1 if index(POS(wi)) = i
-    #     """
-    #     x = np.zeros((len(ner_ex), self.unigram_feat_dim))
-    #     for idx in range(0, len(ner_ex)):
-    #         token = ner_ex.tokens[idx]
-    #         x[idx, :] = self.pos_index_feature_per_token(token)
-    #     return x
 
     def pos_index_feature_per_token(self, token):
         x = np.zeros([1, self.pos_feat_dim])
