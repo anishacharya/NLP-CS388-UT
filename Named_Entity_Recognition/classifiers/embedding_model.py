@@ -6,10 +6,10 @@ import torch
 import torch.nn as nn
 
 from data_utils.nerdata import PersonExample
-from feature_extractors.utils import create_index
+from feature_extractors.utils import create_index, load_word_embedding
+from feature_extractors.embedding_features import word_embedding
+from feature_extractors.ner_features import is_upper_indicator_feat
 from utils.utils import Indexer, flatten
-from feature_extractors.utils import load_word_embedding
-
 
 glove_file = '/Users/anishacharya/Desktop/PhD_1_1/NLP/CS388/Named_Entity_Recognition/data/glove.6B/glove.6B.300d.txt'
 
@@ -70,8 +70,8 @@ class BaselineNERClassifier(object):
 
         feat_vec = []
         # feat_vec = feat_vec + word_indicator
-        # feat_vec = feat_vec + pos_indicator
-        # feat_vec = feat_vec + is_upper
+        feat_vec = feat_vec + pos_indicator
+        feat_vec = feat_vec + is_upper
 
         feat_vec = feat_vec + word_emb
 
@@ -83,12 +83,15 @@ class BaselineNERClassifier(object):
         return 1
 
 
-def get_features(sentence,
-                 pos,
-                 word_ix,
-                 pos_ix,
-                 embed_ix,
-                 idx):
+def get_features(sentence: List,
+                 pos: List,
+                 word_ix: Indexer,
+                 pos_ix: Indexer,
+                 embed_ix: Dict,
+                 idx: int) -> List:
+
+    word = word_ix.ints_to_objs[sentence[idx]]
+
     # collect 1-hot of word
     word_indicator_feat_dim = len(word_ix)
     word_indicator = [0] * word_indicator_feat_dim
@@ -99,26 +102,22 @@ def get_features(sentence,
     pos_indicator = [0] * pos_indicator_feat_dim
     pos_indicator[pos[idx]] = 1
 
-    # check if word starts with capital
-    is_upper_indicator = [0]
-    word = word_ix.ints_to_objs[sentence[idx]]
-    if idx != 0 and word[0].isupper:
-        is_upper_indicator[0] = 1
+    # check if word starts with capital and not first word
+    is_upper_indicator = is_upper_indicator_feat(word=word, idx=idx)
 
     # collect word embedding
-    if sentence[idx] in embed_ix.keys():
-        word_embed = embed_ix[sentence[idx]]
-    else:
-        word_embed = embed_ix[word_ix.objs_to_ints['__UNK__']]
+    word_embed = word_embedding(word=word,
+                                ix2embed=embed_ix,
+                                word2ix=word_ix.objs_to_ints)
 
-    # word_embed = list(word_embed)
+    # get context window embedding (average)
 
     # gather all features
     feature = []
 
     # feature = feature + word_indicator
-    # feature = feature + pos_indicator
-    # feature = feature + is_upper_indicator
+    feature = feature + pos_indicator
+    feature = feature + is_upper_indicator
 
     feature = feature + word_embed
 
@@ -138,8 +137,9 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
 
     epochs = 15
     batch_size = 64
-    print_iter = 15
+    initial_lr = 0.01
     no_of_classes = 2
+    print_iter = 15
 
     """
     ==================================
@@ -154,25 +154,26 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
     feat_dim = 0
 
     # feat_dim += word_indicator_feat_dim
-    # feat_dim += pos_indicator_feat_dim
-    # feat_dim += is_upper_feat_dim
+    feat_dim += pos_indicator_feat_dim
+    feat_dim += is_upper_feat_dim
 
     feat_dim += word_embedding_feat_dim
 
     n_input_dim = feat_dim
-    n_hidden = 4  # Number of hidden nodes
+    n_hidden1 = 16  # Number of hidden nodes
+    n_hidden2 = 4
     n_output = 2  # Number of output nodes = for binary classifier
 
     net = nn.Sequential(
-        nn.Linear(n_input_dim, n_hidden),
+        nn.Linear(n_input_dim, n_hidden1),
         nn.ELU(),
-        nn.Linear(n_hidden, n_output),
+        nn.Linear(n_hidden1, n_hidden2),
+        nn.ELU(),
+        nn.Linear(n_hidden2, n_output),
         nn.Sigmoid())
-
     print(net)
 
-    learning_rate = 0.01
-    optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
+    learning_rate = initial_lr
 
     for epoch in range(epochs):
         """
@@ -187,8 +188,6 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
                 pos_batch = POS[i: i + batch_size]
 
             Y_train = flatten(train_lables[i: i + batch_size])
-            if i/100 % print_iter == 0:
-                print('processing batch = ', i/100)
 
             """
             ========== scaling ================== 
@@ -201,8 +200,9 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
 
             pos_weight = torch.ones([no_of_classes])
             pos_weight[1] = scaling
-
-            loss_func = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+            optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
+            # loss_func = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+            loss_func = nn.BCELoss()
 
             Y_train = np.asarray(Y_train)
 
@@ -232,14 +232,17 @@ def train_model_based_ner(ner_exs: List[PersonExample], dev_data):
             optimizer.step()
             optimizer.zero_grad()
 
-            if i/100 % print_iter == 0:
-                print('Loss ==> ', loss.item())
+        if epoch % print_iter == 0:
+            print("Epoch : ", epoch)
+            print('Loss ==> ', loss.item())
 
         evaluate_classifier(dev_data, BaselineNERClassifier(model=net,
                                                             word_ix=word_ix,
                                                             pos_ix=pos_ix,
                                                             ix2embed=ix2embedding))
         learning_rate = learning_rate/2
+        if epoch%5 == 0:
+            learning_rate = initial_lr
 
     return BaselineNERClassifier(model=net,
                                  word_ix=word_ix,

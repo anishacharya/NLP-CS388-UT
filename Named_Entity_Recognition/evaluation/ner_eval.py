@@ -1,4 +1,4 @@
-from classifiers.ner_classifier import BaselineNERClassifier
+from classifiers.embedding_model import BaselineNERClassifier
 from classifiers.label_count_classifier import *
 
 from typing import List
