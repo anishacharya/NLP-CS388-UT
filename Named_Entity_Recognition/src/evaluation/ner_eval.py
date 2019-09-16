@@ -1,4 +1,4 @@
-from src.classifiers.ner_classifier_fnn import BaselineNERClassifier
+from src.classifiers.fnn import BaselineNERClassifier
 from src.data_utils.nerdata import PersonExample
 from typing import List
 

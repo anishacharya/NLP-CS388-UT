@@ -1,6 +1,6 @@
 from src.evaluation.ner_eval import *
 from src.data_utils.nerdata import *
-from src.classifiers.ner_classifier_fnn import train_model_based_ner
+from src.classifiers.fnn import train_model_based_ner
 from src.classifiers.label_count_classifier import train_count_based_binary_ner
 import argparse
 import time
