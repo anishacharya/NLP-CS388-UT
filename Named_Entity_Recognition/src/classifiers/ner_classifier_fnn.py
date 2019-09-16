@@ -11,7 +11,7 @@ from src.feature_extractors.utils import create_index, index_data, load_word_emb
 from src.feature_extractors.embedding_features import word_embedding
 from src.utils.utils import Indexer, flatten
 
-glove_file = '/Users/anishacharya/Desktop/PhD_1_1/NLP/CS388/Named_Entity_Recognition/data/glove.6B/glove.6B.300d.txt'
+glove_file = '/Users/anishacharya/Desktop/glove.6B/glove.6B.300d.txt'
 
 
 class BaselineNERClassifier(object):
@@ -310,17 +310,6 @@ def train_model_based_ner(ner_exs: List[PersonExample]):
         print("Epoch : ", epoch)
         print("Time taken", time.time() - t)
         print("Learning Rate = ", learning_rate)
-        # f1 = evaluate_classifier(dev_data, BaselineNERClassifier(model=net,
-        #                                                     word_ix=word_ix,
-        #                                                     pos_ix=pos_ix,
-        #                                                     ix2embed=ix2embedding))
-        # if f1 > best_f1:
-        #     predict_write_output_to_file(test_data, BaselineNERClassifier(model=net,
-        #                                                     word_ix=word_ix,
-        #                                                     pos_ix=pos_ix,
-        #                                                     ix2embed=ix2embedding) , 'eng.testb.out')
-        #     best_f1 = f1
-
         if (epoch + 1) % 3 == 0:
             learning_rate = initial_lr*2
 

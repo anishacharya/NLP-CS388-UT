@@ -19,12 +19,13 @@ def _parse_args():
     :return: the parsed args bundle
     """
     parser = argparse.ArgumentParser(description='trainer.py')
-    parser.add_argument('--model', type=str, default='CLASSIFIER', help='model to run (BAD, CLASSIFIER)')
-    parser.add_argument('--train_path', type=str, default='data/eng.train',
+    parser.add_argument('--model', type=str, default='FNN', help='model to run (COUNT, FNN)')
+    parser.add_argument('--mode', type=str, default='multiclass', help='binary, multiclass')
+    parser.add_argument('--train_path', type=str, default='data/CONLL_2003/eng.train',
                         help='path to train set (you should not need to modify)')
-    parser.add_argument('--dev_path', type=str, default='data/eng.testa',
+    parser.add_argument('--dev_path', type=str, default='data/CONLL_2003/eng.testa',
                         help='path to dev set (you should not need to modify)')
-    parser.add_argument('--blind_test_path', type=str, default='data/eng.testb.blind',
+    parser.add_argument('--blind_test_path', type=str, default='data/CONLL_2003/eng.testb.blind',
                         help='path to dev set (you should not need to modify)')
     parser.add_argument('--test_output_path', type=str, default='eng.testb.out',
                         help='output path for test predictions')
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     test_exs = list(transform_label_for_binary_classification(read_data(args.blind_test_path)))
 
     # Train the model
-    if args.model == "BAD":
+    if args.model == "COUNT":
         classifier = train_count_based_binary_ner(train_class_exs)
     else:
         classifier = train_model_based_ner(train_class_exs)

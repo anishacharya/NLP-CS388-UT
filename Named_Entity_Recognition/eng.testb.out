@@ -103,7 +103,7 @@ misdirected 0
 defensive 0
 header 0
 to 0
-lob 1
+lob 0
 the 0
 ball 0
 over 0
@@ -262,7 +262,7 @@ minutes 0
 
 Defender 0
 Hassan 1
-Abbas 1
+Abbas 0
 rose 0
 to 0
 intercept 0
@@ -698,7 +698,7 @@ Checchinato 0
 Walter 1
 Cristofoletto 0
 , 0
-Franco 0
+Franco 1
 Properzi 0
 Curti 0
 , 0
@@ -813,7 +813,7 @@ minutes 0
 
 Defender 0
 Hassan 1
-Abbas 1
+Abbas 0
 rose 0
 to 0
 intercept 0
@@ -1068,7 +1068,7 @@ Srour 0
 4 0
 - 0
 Hassan 1
-Abbas 1
+Abbas 0
 , 0
 5 0
 - 0
@@ -1131,7 +1131,7 @@ Jokhadar 0
 FREESTYLE 0
 SKIING-WORLD 0
 CUP 0
-MOGUL 1
+MOGUL 0
 RESULTS 0
 . 0
 
@@ -1364,7 +1364,7 @@ Scorers 0
 Japan 0
 - 0
 Hassan 1
-Abbas 1
+Abbas 0
 84 0
 own 0
 goal 0
@@ -3484,7 +3484,7 @@ RESULTS 0
 . 0
 
 RIO 0
-DE 0
+DE 1
 JANEIRO 0
 1996-12-05 0
 
@@ -4057,7 +4057,7 @@ Benjamin 1
 27 0
 
 R. 1
-Ponting 0
+Ponting 1
 lbw 1
 McLean 0
 5 0
@@ -4808,7 +4808,7 @@ Mark 1
 Waugh 1
 , 0
 Ricky 1
-Ponting 0
+Ponting 1
 , 0
 Greg 1
 Blewett 0
@@ -4923,7 +4923,7 @@ singles 0
 Group 0
 B 0
 
-Chen 1
+Chen 0
 Gang 0
 ( 0
 China 0
@@ -4972,7 +4972,7 @@ Group 0
 C 0
 
 Sun 0
-Jun 1
+Jun 0
 ( 0
 China 0
 ) 0
@@ -5024,7 +5024,7 @@ Santoso 0
 Indonesia 0
 ) 0
 beat 0
-Hu 1
+Hu 0
 Zhilan 0
 ( 0
 China 0
@@ -5052,7 +5052,7 @@ Indonesia 0
 ) 0
 ; 0
 Sun 0
-Jun 1
+Jun 0
 ( 0
 China 0
 ) 0
@@ -5111,8 +5111,8 @@ Martin 1
 Denmark 0
 ) 0
 beat 0
-Wang 1
-Chen 1
+Wang 0
+Chen 0
 ( 0
 China 0
 ) 0
@@ -5970,7 +5970,7 @@ return 0
 
 Third-stringer 0
 Kerwin 0
-Bell 1
+Bell 0
 , 0
 a 0
 1988 0
@@ -6052,7 +6052,7 @@ yards 0
 before 0
 he 0
 was 0
-benched 1
+benched 0
 . 0
 
 Ricky 1
@@ -6150,7 +6150,7 @@ YORK 0
 .625 0
 3 0
 
-ORLANDO 0
+ORLANDO 1
 8 0
 6 0
 .571 0
@@ -6393,7 +6393,7 @@ AT 0
 GOLDEN 0
 STATE 0
 
-ORLANDO 0
+ORLANDO 1
 AT 0
 LA 0
 LAKERS 0
@@ -6867,7 +6867,7 @@ Ohio 0
 State 0
 left 0
 tackle 0
-Orlando 0
+Orlando 1
 Pace 0
 became 0
 the 0
@@ -8099,7 +8099,7 @@ Russia 0
 ) 0
 beat 0
 Jim 1
-Courier 0
+Courier 1
 ( 0
 U.S. 0
 ) 0
@@ -8237,7 +8237,7 @@ Squad 0
 Goalkeepers 0
 - 0
 Vitor 1
-Baia 0
+Baia 1
 ( 0
 Barcelona 0
 , 0
@@ -8254,7 +8254,7 @@ Braga 0
 Defenders 0
 - 0
 Paulinho 1
-Santos 0
+Santos 1
 ( 0
 Porto 0
 ) 0
@@ -8272,8 +8272,8 @@ Pinto 1
 Porto 0
 ) 0
 , 0
-Oceano 1
-Cruz 0
+Oceano 0
+Cruz 1
 ( 0
 Sporting 0
 ) 0
@@ -8625,7 +8625,7 @@ Fernando 1
 Hierro 0
 20-1 0
 Ivan 1
-de 0
+de 1
 
 laPena 0
 
@@ -8693,7 +8693,7 @@ breathalyse 0
 fans 0
 at 0
 the 0
-gates 0
+gates 1
 of 0
 the 0
 Santiago 1
@@ -10039,7 +10039,7 @@ Dimas 1
 , 0
 while 0
 Alessandro 1
-Del 0
+Del 1
 Piero 0
 and 0
 Croat 0
@@ -15059,7 +15059,7 @@ May 0
 72.97 0
 74.42-79.19 0
 
-Jun 1
+Jun 0
 97 0
 77.53 0
 77.24 0
@@ -16207,7 +16207,7 @@ Ghana 0
 . 0
 
 PaineWebber 0
-analyst 0
+analyst 1
 Marc 1
 Cohen 0
 said 0
@@ -16346,7 +16346,7 @@ neutral 0
 , 0
 " 0
 the 0
-analyst 0
+analyst 1
 added 0
 . 0
 
@@ -16564,7 +16564,7 @@ said 0
 Zimbabwe 0
 executes 0
 convicted 0
-murderer 1
+murderer 0
 . 0
 
 HARARE 0
@@ -16574,7 +16574,7 @@ Zimbabwe 0
 hanged 0
 a 0
 convicted 0
-murderer 1
+murderer 0
 on 0
 Friday 0
 , 0
@@ -19215,7 +19215,7 @@ Konstantin 0
 Chernyshev 0
 , 0
 equities 0
-analyst 0
+analyst 1
 at 0
 Moscow 0
 brokerage 0
@@ -21309,11 +21309,11 @@ Brazil 0
 . 0
 
 Simona 0
-de 0
+de 1
 Logu 0
 
 RIO 0
-DE 0
+DE 1
 JANEIRO 0
 1996-12-06 0
 
@@ -22230,7 +22230,7 @@ watches 0
 . 0
 
 RIO 0
-DE 0
+DE 1
 JANEIRO 0
 1996-12-06 0
 
@@ -22265,7 +22265,7 @@ Friday 0
 . 0
 
 Rio 0
-de 0
+de 1
 Janeiro 0
 state 0
 university 0
@@ -22884,7 +22884,7 @@ been 0
 involved 0
 , 0
 Alatas 1
-replied 0
+replied 1
 : 0
 " 0
 Probably 0
@@ -23429,7 +23429,7 @@ still 0
 gathered 0
 outside 0
 the 0
-gates 0
+gates 1
 of 0
 their 0
 campus 0
@@ -26305,7 +26305,7 @@ in 0
 1982 0
 , 0
 John 1
-Mills 0
+Mills 1
 Jr 1
 . 0
 
@@ -26342,7 +26342,7 @@ father 0
 looked 0
 on 0
 , 0
-Mills 0
+Mills 1
 was 0
 pronounced 0
 dead 0
@@ -26366,7 +26366,7 @@ Speaking 0
 in 0
 Arabic 0
 , 0
-Mills 0
+Mills 1
 made 0
 a 0
 final 0
@@ -26432,7 +26432,7 @@ God 0
 " 0
 he 0
 quoted 0
-Mills 0
+Mills 1
 as 0
 saying 0
 . 0
@@ -26445,7 +26445,7 @@ had 0
 no 0
 record 0
 of 0
-Mills 0
+Mills 1
 ' 0
 official 0
 conversion 0
@@ -26492,7 +26492,7 @@ to 0
 Islam 0
 . 0
 
-Mills 0
+Mills 1
 is 0
 the 0
 38th 0
@@ -26523,7 +26523,7 @@ penalty 0
 Prison 0
 officials 0
 said 0
-Mills 0
+Mills 1
 made 0
 no 0
 special 0
@@ -26557,13 +26557,13 @@ members 0
 and 0
 his 0
 spiritual 0
-adviser 1
+adviser 0
 , 0
 Morris 1
 said 0
 . 0
 
-Mills 0
+Mills 1
 was 0
 scheduled 0
 to 0
@@ -26606,7 +26606,7 @@ In 0
 March 0
 1982 0
 , 0
-Mills 0
+Mills 1
 and 0
 accomplice 0
 Michael 1
@@ -26649,7 +26649,7 @@ tire 0
 iron 0
 . 0
 
-Mills 0
+Mills 1
 then 0
 fired 0
 two 0
@@ -31423,7 +31423,7 @@ set 0
 
 Arafat 1
 's 0
-adviser 1
+adviser 0
 Nabil 1
 Abu 0
 Rdainah 0
@@ -31611,7 +31611,7 @@ meeting 0
 
 Mubarak 1
 's 0
-adviser 1
+adviser 0
 Osama 0
 el-Baz 0
 said 0
@@ -34278,7 +34278,7 @@ of 0
 a 0
 Moroccan 0
 army 0
-colonel 0
+colonel 1
 , 0
 had 0
 been 0
@@ -34605,7 +34605,7 @@ but 0
 its 0
 leader 0
 Umberto 1
-Bossi 0
+Bossi 1
 later 0
 switched 0
 to 0
@@ -34639,7 +34639,7 @@ self-styled 0
 " 0
 Republic 0
 of 0
-Padania 1
+Padania 0
 " 0
 , 0
 flopped 0
@@ -41332,7 +41332,7 @@ Germany 0
 ) 0
 
 5. 0
-Petra 1
+Petra 0
 Behle 0
 ( 0
 Germany 0
@@ -42857,7 +42857,7 @@ Indonesia 0
 15-8 0
 
 Sun 0
-Jun 1
+Jun 0
 ( 0
 China 0
 ) 0
@@ -45839,7 +45839,7 @@ Doncaster 0
 33 0
 24 0
 
-Mansfield 0
+Mansfield 1
 21 0
 5 0
 9 0
@@ -46435,7 +46435,7 @@ Boreham 0
 Wood 0
 1 0
 
-Mansfield 0
+Mansfield 1
 0 0
 Stockport 0
 3 0
@@ -47828,7 +47828,7 @@ Tae 0
 8 0
 - 0
 Roh 0
-Sang 0
+Sang 1
 Rae 0
 ( 0
 7 0
@@ -47872,7 +47872,7 @@ Jin 0
 23 0
 - 0
 Yoo 0
-Sang 0
+Sang 1
 Chul 0
 ; 0
 24 0
@@ -48403,7 +48403,7 @@ YORK 0
 .647 0
 2 0
 
-ORLANDO 0
+ORLANDO 1
 8 0
 7 0
 .533 0
@@ -48737,7 +48737,7 @@ STATE 0
 LA 0
 LAKERS 0
 92 0
-Orlando 0
+Orlando 1
 81 0
 
 -DOCSTART- 0
@@ -49766,7 +49766,7 @@ Tuesday 0
 , 0
 travel 0
 to 0
-De 0
+De 1
 Graafschap 0
 Doetinchem 0
 . 0
