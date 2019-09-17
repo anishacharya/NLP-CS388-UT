@@ -1,4 +1,4 @@
-from src.data_utils.nerdata import PersonExample
+from src.data_utils.definitions import PersonExample
 from src.utils.utils import Indexer
 from typing import List
 from nltk.corpus import stopwords
