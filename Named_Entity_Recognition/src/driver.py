@@ -1,10 +1,13 @@
+import sys, os
+
+sys.path.append(os.path.dirname(__file__) + '../.')
+
 from src.evaluation.ner_eval import *
 from src.data_utils.nerdata import *
 from src.classifiers.fnn import train_model_based_ner
 from src.classifiers.label_count_classifier import train_count_based_binary_ner
 import argparse
 import time
-
 
 """
 Author: Anish Acharya <anishacharya@utexas.edu>
@@ -21,11 +24,11 @@ def _parse_args():
     parser = argparse.ArgumentParser(description='trainer.py')
     parser.add_argument('--model', type=str, default='FNN', help='model to run (COUNT, FNN)')
     parser.add_argument('--mode', type=str, default='multiclass', help='binary, multiclass')
-    parser.add_argument('--train_path', type=str, default='data/CONLL_2003/eng.train',
+    parser.add_argument('--train_path', type=str, default='../data/CONLL_2003/eng.train',
                         help='path to train set (you should not need to modify)')
-    parser.add_argument('--dev_path', type=str, default='data/CONLL_2003/eng.testa',
+    parser.add_argument('--dev_path', type=str, default='../data/CONLL_2003/eng.testa',
                         help='path to dev set (you should not need to modify)')
-    parser.add_argument('--blind_test_path', type=str, default='data/CONLL_2003/eng.testb.blind',
+    parser.add_argument('--blind_test_path', type=str, default='../data/CONLL_2003/eng.testb.blind',
                         help='path to dev set (you should not need to modify)')
     parser.add_argument('--test_output_path', type=str, default='eng.testb.out',
                         help='output path for test predictions')
@@ -64,6 +67,3 @@ if __name__ == '__main__':
         test_exs = list(transform_label_for_binary_classification(read_data(args.blind_test_path)))
         predict_write_output_to_file(test_exs, classifier, args.test_output_path)
         print("Wrote predictions on %i labeled sentences to %s" % (len(test_exs), args.test_output_path))
-
-
-
