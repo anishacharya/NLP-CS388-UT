@@ -1,7 +1,7 @@
 from typing import List
 
 
-def word_embedding(word, ix2embed, word2ix):
+def get_word_embedding(word, ix2embed, word2ix):
     ix = word2ix[word]
     if ix in ix2embed:
         word_embed = ix2embed[ix]

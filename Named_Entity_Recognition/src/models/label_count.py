@@ -1,6 +1,4 @@
-from src.data_utils.definitions import (LabeledSentence,
-                                        chunks_from_bio_tag_seq,
-                                        Token)
+from src.data_utils.definitions import LabeledSentence, Token, chunks_from_bio_tag_seq
 from typing import List, Counter
 
 

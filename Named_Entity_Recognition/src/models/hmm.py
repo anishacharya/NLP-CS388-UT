@@ -1,5 +1,4 @@
-from src.utils.utils import Indexer
-from src.data_utils.definitions import Token
+from src.data_utils.definitions import Indexer, Token
 from typing import List
 
 
@@ -14,7 +13,8 @@ class HmmNerModel(object):
         transition_log_probs: [num_tags, num_tags] matrix containing transition log probabilities (prev, curr)
         emission_log_probs: [num_tags, num_words] matrix containing emission log probabilities (tag, word)
     """
-    def __init__(self, tag_indexer: Indexer, word_indexer: Indexer, init_log_probs, transition_log_probs, emission_log_probs):
+    def __init__(self, tag_indexer: Indexer, word_indexer: Indexer, init_log_probs,
+                 transition_log_probs, emission_log_probs):
         self.tag_indexer = tag_indexer
         self.word_indexer = word_indexer
         self.init_log_probs = init_log_probs

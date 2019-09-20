@@ -28,13 +28,13 @@ def _parse_args():
                         help='model to run (Binary: COUNT, MLP; MultiClass: COUNT, HMM, CRF)')
     parser.add_argument('--mode', type=str, default=config.mode,
                         help='binary, multi_class')
-    parser.add_argument('--train_path', type=str, default='../data/CONLL_2003/eng.train',
+    parser.add_argument('--train_path', type=str, default=config.data_path + config.language + '.train',
                         help='path to train set (you should not need to modify)')
-    parser.add_argument('--dev_path', type=str, default='../data/CONLL_2003/eng.testa',
+    parser.add_argument('--dev_path', type=str, default=config.data_path + config.language + '.testa',
                         help='path to dev set')
-    parser.add_argument('--blind_test_path', type=str, default='../data/CONLL_2003/eng.testb.blind',
+    parser.add_argument('--blind_test_path', type=str, default=config.data_path + config.language + '.testb.blind',
                         help='path to dev set (you should not need to modify)')
-    parser.add_argument('--test_output_path', type=str, default='eng.testb.out',
+    parser.add_argument('--test_output_path', type=str, default=config.output_path,
                         help='output path for test predictions')
     parser.add_argument('--no_run_on_test', dest='run_on_test', default=False, action='store_false',
                         help='skip printing output on the test set')

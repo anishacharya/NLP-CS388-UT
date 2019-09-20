@@ -4,11 +4,7 @@ Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
 """
 
 from typing import List
-from src.data_utils.definitions import (LabeledSentence,
-                                        PersonExample,
-                                        Token,
-                                        bio_tags_from_chunks,
-                                        chunks_from_bio_tag_seq)
+from src.data_utils.definitions import LabeledSentence, PersonExample, Token, bio_tags_from_chunks, chunks_from_bio_tag_seq
 
 
 def read_data(file: str) -> List[LabeledSentence]:

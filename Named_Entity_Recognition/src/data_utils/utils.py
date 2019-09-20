@@ -1,9 +1,9 @@
-from src.data_utils.definitions import PersonExample
-from src.utils.utils import Indexer
+from collections import Counter
 from typing import List
+from src.data_utils.definitions import PersonExample, Indexer
+
 from nltk.corpus import stopwords
 from string import punctuation
-import numpy as np
 
 
 def create_index(ner_exs: List[PersonExample]) -> [Indexer, Indexer]:
@@ -28,6 +28,21 @@ def create_index(ner_exs: List[PersonExample]) -> [Indexer, Indexer]:
                 pos_ix.add_and_get_index(pos)
 
     return word_ix, pos_ix
+
+
+def get_word_index(word_indexer: Indexer, word_counter: Counter, word: str) -> int:
+    """
+    Retrieves a word's index based on its count. If the word occurs only once, treat it as an "UNK" token
+    At test time, unknown words will be replaced by UNKs.
+    :param word_indexer: Indexer mapping words to indices for HMM featurization
+    :param word_counter: Counter containing word counts of training set
+    :param word: string word
+    :return: int of the word index
+    """
+    if word_counter[word] < 1.5:
+        return word_indexer.add_and_get_index("__UNK__")
+    else:
+        return word_indexer.add_and_get_index(word)
 
 
 def inverse_idx_sentence(ix_sentence, ix2word):
@@ -63,24 +78,6 @@ def index_data(ner_exs: List[PersonExample], word_ix, pos_ix):
     return Sentences, POS, indexed_y
 
 
-def load_word_embedding(pretrained_embedding_filename, word2index_vocab):
-    """
-    Read a GloVe txt file.we return dictionaries
-    `mapping index to embedding vector( index_to_embedding)`,
-    """
-    index_to_embedding = {}
-    with open(pretrained_embedding_filename, 'r') as glove_file:
-        for (i, line) in enumerate(glove_file):
-            split = line.split(' ')
-            word = split[0]
-            ix = word2index_vocab.get(word.lower())
-            if ix is not None:
-                representation = split[1:]
-                representation = np.array([float(val) for val in representation])
-                index_to_embedding[ix] = list(representation)
-    unk = word2index_vocab['__UNK__']
-    index_to_embedding[unk] = [0.0] * len(representation)  # Empty representation for unknown words.
 
-    return index_to_embedding
 
 

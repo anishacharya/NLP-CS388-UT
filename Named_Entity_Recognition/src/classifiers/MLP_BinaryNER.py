@@ -6,13 +6,13 @@ import torch
 import torch.nn as nn
 import time
 
-from src.data_utils.definitions import PersonExample
-from src.feature_extractors.utils import create_index, index_data, load_word_embedding
-from src.feature_extractors.embedding_features import word_embedding
-from src.utils.utils import Indexer, flatten
-import src.config as config
+from src.data_utils.definitions import PersonExample, Indexer
+from src.data_utils.utils import create_index, index_data
+from src.models.utils import load_word_embedding
+from src.feature_extractors.embedding_features import get_word_embedding
 
-glove_file = '/Users/anishacharya/Desktop/glove.6B/glove.6B.300d.txt'
+from src.utils.utils import flatten
+import src.config as config
 
 
 class BinaryPersonClassifier(object):
@@ -134,9 +134,9 @@ def get_features(sentence: List,
     # all_caps_indicator = all_caps_indicator_feat(word=word)
 
     "collect word embedding features"
-    word_embed = word_embedding(word=word,
-                                ix2embed=embed_ix,
-                                word2ix=word_ix.objs_to_ints)
+    word_embed = get_word_embedding(word=word,
+                                    ix2embed=embed_ix,
+                                    word2ix=word_ix.objs_to_ints)
 
     "get context window __ | __ embedding (average)"
     # tokens = inverse_idx_sentence(sentence, ix2word=word_ix.ints_to_objs)
@@ -193,7 +193,7 @@ def train_model_based_binary_ner(ner_exs: List[PersonExample]):
     ========== Build Indexers =============
     """
     word_ix, pos_ix = create_index(ner_exs)
-    ix2embedding = load_word_embedding(pretrained_embedding_filename=glove_file,
+    ix2embedding = load_word_embedding(pretrained_embedding_filename=config.glove_file,
                                        word2index_vocab=word_ix.objs_to_ints)
     train_sent, POS, train_lables = index_data(ner_exs, word_ix, pos_ix)
 
