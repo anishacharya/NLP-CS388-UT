@@ -1,9 +1,30 @@
-from src.data_utils.definitions import LabeledSentence, chunks_from_bio_tag_seq, Token
-from typing import List
-from collections import Counter
+from src.data_utils.definitions import (LabeledSentence,
+                                        chunks_from_bio_tag_seq,
+                                        Token)
+from typing import List, Counter
 
 
-class LabelCountNER(object):
+class LabelCountBinary(object):
+    """
+    Person classifier that takes counts of how often a word was observed to be the positive and negative class
+    in training, and classifies as positive any tokens which are observed to be positive more than negative.
+    Unknown tokens or ties default to negative.
+    Attributes:
+        pos_counts: how often each token occurred with the label 1 in training
+        neg_counts: how often each token occurred with the label 0 in training
+    """
+    def __init__(self, pos_counts: Counter, neg_counts: Counter):
+        self.pos_counts = pos_counts
+        self.neg_counts = neg_counts
+
+    def predict(self, tokens: List[Token], idx: int):
+        if self.pos_counts[tokens[idx].word] > self.neg_counts[tokens[idx].word]:
+            return 1
+        else:
+            return 0
+
+
+class LabelCount(object):
     """
     NER model that simply assigns each word its most likely observed tag in training
 
@@ -28,19 +49,3 @@ class LabelCountNER(object):
             else:
                 pred_tags.append("O")
         return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
-
-
-def train_label_count_ner(training_set: List[LabeledSentence]) -> LabelCountNER:
-    """
-    :param training_set: labeled NER sentences to extract a BadNerModel from
-    :return: the BadNerModel based on counts collected from the training data
-    """
-    words_to_tag_counters = {}
-    for sentence in training_set:
-        tags = sentence.get_bio_tags()
-        for idx in range(0, len(sentence)):
-            word = sentence.tokens[idx].word
-            if word not in words_to_tag_counters:
-                words_to_tag_counters[word] = Counter()
-            words_to_tag_counters[word][tags[idx]] += 1.0
-    return LabelCountNER(words_to_tag_counters)

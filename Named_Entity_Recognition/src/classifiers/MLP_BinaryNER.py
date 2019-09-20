@@ -10,6 +10,7 @@ from src.data_utils.definitions import PersonExample
 from src.feature_extractors.utils import create_index, index_data, load_word_embedding
 from src.feature_extractors.embedding_features import word_embedding
 from src.utils.utils import Indexer, flatten
+import src.config as config
 
 glove_file = '/Users/anishacharya/Desktop/glove.6B/glove.6B.300d.txt'
 
@@ -196,10 +197,10 @@ def train_model_based_binary_ner(ner_exs: List[PersonExample]):
                                        word2index_vocab=word_ix.objs_to_ints)
     train_sent, POS, train_lables = index_data(ner_exs, word_ix, pos_ix)
 
-    epochs = 15
-    batch_size = 64
-    initial_lr = 0.01
-    no_of_classes = 2
+    epochs = config.epochs
+    batch_size = config.batch_size
+    initial_lr = config.initial_lr
+    no_of_classes = config.no_of_classes
 
     """
     ==================================

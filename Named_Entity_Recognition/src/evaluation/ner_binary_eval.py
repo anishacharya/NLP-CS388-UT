@@ -1,4 +1,4 @@
-from src.classifiers.FNN_BinaryNER import BinaryPersonClassifier
+from src.classifiers.MLP_BinaryNER import BinaryPersonClassifier
 from src.data_utils.definitions import PersonExample
 from typing import List
 
@@ -6,11 +6,12 @@ from typing import List
 Author: Anish Acharya <anishacharya@utexas.edu>
 Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
 """
-# TODO: merge with ner_eval
+# TODO: merge with ner_eval - Create a single File
 """
 ========== Binary Classification specific evaluation utils ====== 
   
 """
+
 
 def evaluate_binary_classifier(exs: List[PersonExample], classifier: BinaryPersonClassifier):
     """

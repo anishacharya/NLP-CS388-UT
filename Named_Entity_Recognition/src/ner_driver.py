@@ -1,16 +1,12 @@
 import os
 import sys
 sys.path.append(os.path.dirname(__file__) + '../.')
-
-from src.evaluation.ner_binary_eval import (evaluate_binary_classifier,
-                                            predict_binary_write_output_to_file)
-from src.data_utils.conll_reader import (read_data,
-                                         transform_label_for_binary_classification)
-from src.evaluation.ner_eval import (print_evaluation_metric,
-                                     write_test_output)
-from src.classifiers.FNN_BinaryNER import train_model_based_binary_ner
-from src.classifiers.LabelCountBinaryNER import train_label_count_binary_ner
-from src.classifiers.LabelCountNER import train_label_count_ner
+from src.evaluation.ner_binary_eval import evaluate_binary_classifier, predict_binary_write_output_to_file
+from src.data_utils.conll_reader import read_data, transform_label_for_binary_classification
+from src.evaluation.ner_eval import print_evaluation_metric, write_test_output
+from src.classifiers.MLP_BinaryNER import train_model_based_binary_ner
+from src.classifiers.label_count_driver import train_label_count_ner, train_label_count_binary_ner
+import src.config as config
 import argparse
 import time
 
@@ -28,14 +24,14 @@ def _parse_args():
     :return: the parsed args bundle
     """
     parser = argparse.ArgumentParser(description='trainer.py')
-    parser.add_argument('--model', type=str, default='COUNT',
-                        help='model to run (Binary: COUNT, FNN; MultiClass: COUNT, HMM, CRF)')
-    parser.add_argument('--mode', type=str, default='multiclass',
-                        help='binary, multiclass')
+    parser.add_argument('--model', type=str, default=config.model,
+                        help='model to run (Binary: COUNT, MLP; MultiClass: COUNT, HMM, CRF)')
+    parser.add_argument('--mode', type=str, default=config.mode,
+                        help='binary, multi_class')
     parser.add_argument('--train_path', type=str, default='../data/CONLL_2003/eng.train',
                         help='path to train set (you should not need to modify)')
     parser.add_argument('--dev_path', type=str, default='../data/CONLL_2003/eng.testa',
-                        help='path to dev set (you should not need to modify)')
+                        help='path to dev set')
     parser.add_argument('--blind_test_path', type=str, default='../data/CONLL_2003/eng.testb.blind',
                         help='path to dev set (you should not need to modify)')
     parser.add_argument('--test_output_path', type=str, default='eng.testb.out',
@@ -50,21 +46,22 @@ if __name__ == '__main__':
     start_time = time.time()
     args = _parse_args()
     print(args)
-    # Load the training and test data
+
+    """ Load the training and test data """
     train_data = read_data(args.train_path)
     dev_data = read_data(args.dev_path)
     test_data = read_data(args.blind_test_path)
 
     if args.mode == 'binary':
-        # Convert Data into binary
+        """ Convert Data into binary """
         train_class_exs = list(transform_label_for_binary_classification(train_data))
         dev_class_exs = list(transform_label_for_binary_classification(dev_data))
         test_exs = list(transform_label_for_binary_classification(test_data))
 
-        # Train the model
+        """ Train the model """
         if args.model == "COUNT":
             classifier = train_label_count_binary_ner(train_class_exs)
-        elif args.model == "FNN":
+        elif args.model == "MLP":
             classifier = train_model_based_binary_ner(train_class_exs)
         else:
             raise NotImplementedError("The {} model for {} mode is not implemented yet".format(args.model, args.mode))
@@ -83,7 +80,7 @@ if __name__ == '__main__':
             predict_binary_write_output_to_file(test_exs, classifier, args.test_output_path)
             print("Wrote predictions on %i labeled sentences to %s" % (len(test_exs), args.test_output_path))
 
-    elif args.mode == 'multiclass':
+    elif args.mode == 'multi_class':
         # Train the Model
         if args.model == "COUNT":
             model = train_label_count_ner(train_data)
