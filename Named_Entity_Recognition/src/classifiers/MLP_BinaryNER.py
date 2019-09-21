@@ -14,6 +14,14 @@ from src.feature_extractors.embedding_features import get_word_embedding
 from src.utils.utils import flatten
 import src.config as config
 
+from nltk.corpus import stopwords
+from string import punctuation
+
+
+stops = set(stopwords.words("english"))
+stops.update(set(punctuation))
+stops.update({'-X-', ',', '$', ':', '-DOCSTART-'})
+
 
 class BinaryPersonClassifier(object):
     """
@@ -192,7 +200,7 @@ def train_model_based_binary_ner(ner_exs: List[PersonExample]):
     =======================================
     ========== Build Indexers =============
     """
-    word_ix, pos_ix = create_index(ner_exs)
+    word_ix, pos_ix = create_index(ner_exs=ner_exs, stops=stops)
     ix2embedding = load_word_embedding(pretrained_embedding_filename=config.glove_file,
                                        word2index_vocab=word_ix.objs_to_ints)
     train_sent, POS, train_lables = index_data(ner_exs, word_ix, pos_ix)

@@ -1,11 +1,16 @@
 import os
 import sys
 sys.path.append(os.path.dirname(__file__) + '../.')
-from src.evaluation.ner_binary_eval import evaluate_binary_classifier, predict_binary_write_output_to_file
+
 from src.data_utils.conll_reader import read_data, transform_label_for_binary_classification
+
+from src.evaluation.ner_binary_eval import evaluate_binary_classifier, predict_binary_write_output_to_file
 from src.evaluation.ner_eval import print_evaluation_metric, write_test_output
+
 from src.classifiers.MLP_BinaryNER import train_model_based_binary_ner
 from src.classifiers.label_count_driver import train_label_count_ner, train_label_count_binary_ner
+from src.classifiers.hmm_ner_driver import train_hmm_ner
+
 import src.config as config
 import argparse
 import time
@@ -85,7 +90,8 @@ if __name__ == '__main__':
         if args.model == "COUNT":
             model = train_label_count_ner(train_data)
             dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
-
+        elif args.model == "HMM":
+            model = train_hmm_ner(train_data)
         else:
             raise NotImplementedError("The {} model for {} mode is not implemented yet".format(args.model, args.mode))
 

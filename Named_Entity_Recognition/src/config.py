@@ -2,7 +2,7 @@
 data_path = '/Users/anishacharya/Desktop/UT_Fall_2019/NLP/NLP_Done_Right/Named_Entity_Recognition/data/CONLL_2003/'
 language = 'eng'  # eng, du
 
-model = 'COUNT'  # (Binary: COUNT, MLP; MultiClass: COUNT, HMM, CRF)'
+model = 'HMM'  # (Binary: COUNT, MLP; MultiClass: COUNT, HMM, CRF)'
 mode = 'multi_class'  # binary, multi_class
 output_path = 'eng.testb.out'
 
