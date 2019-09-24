@@ -34,7 +34,8 @@ class HmmNerModel(object):
         :return: The LabeledSentence consisting of predictions over the sentence
         """
         # Implementation of Viterbi Decoding
-        # ~\cite{https://en.wikipedia.org/wiki/Viterbi_algorithm}
+        # Adopted from ~\cite{https://en.wikipedia.org/wiki/Viterbi_algorithm}
+        # and Greg Durrett Notes: ~\cite{https://www.cs.utexas.edu/~gdurrett/courses/fa2019/viterbi.pdf}
 
         # initialize the probability matrix/lattice
         state_space_dim = len(self.tag_indexer)
@@ -88,4 +89,3 @@ class HmmNerModel(object):
         print('The steps of states are ' + ' '.join(pred_tags) + ' with highest log probability of %s' % max_prob)
 
         return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
-        # raise Exception("IMPLEMENT ME")

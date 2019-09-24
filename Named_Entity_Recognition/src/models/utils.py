@@ -1,6 +1,8 @@
 from typing import List
 import numpy as np
-from src.data_utils.definitions import Token, Indexer
+from src.data_utils.definitions import Token, Indexer, LabeledSentence
+import torch
+import src.config as conf
 
 
 class ProbabilisticSequenceScorer(object):
@@ -59,7 +61,7 @@ def load_word_embedding(pretrained_embedding_filename, word2index_vocab):
                 representation = split[1:]
                 representation = np.array([float(val) for val in representation])
                 index_to_embedding[ix] = list(representation)
-    unk = word2index_vocab['__UNK__']
+    unk = word2index_vocab[conf.UNK_TOKEN]
     index_to_embedding[unk] = [0.0] * len(representation)  # Empty representation for unknown words.
 
     return index_to_embedding
@@ -105,4 +107,36 @@ def score_indexed_features(feats, weights: np.ndarray):
     for feat in feats:
         score += weights[feat]
     return score
+
+
+def prepare_data_point(sentence: LabeledSentence, word_indexer: Indexer):
+    one_hot = [word_indexer.objs_to_ints[token.word] if token.word in word_indexer.objs_to_ints
+               else word_indexer.objs_to_ints[conf.UNK_TOKEN] for token in sentence.tokens]
+    return torch.tensor(one_hot, dtype=torch.long)
+
+
+def prepare_label_point(sentence: LabeledSentence, tag_indexer: Indexer):
+    one_hot = [tag_indexer.objs_to_ints[bio_tag] if bio_tag in tag_indexer.objs_to_ints else
+               tag_indexer.objs_to_ints[conf.UNK_TOKEN] for bio_tag in sentence.bio_tags]
+    return torch.tensor(one_hot, dtype=torch.long)
+
+
+def argmax(vec):
+    # return the argmax as a python int
+    _, idx = torch.max(vec, 1)
+    return idx.item()
+
+
+# Compute log sum exp in a numerically stable way for the forward algorithm
+def log_sum_exp(vec):
+    max_score = vec[0, argmax(vec)]
+    max_score_broadcast = max_score.view(1, -1).expand(1, vec.size()[1])
+    return max_score + \
+        torch.log(torch.sum(torch.exp(vec - max_score_broadcast)))
+
+
+
+
+
+
 

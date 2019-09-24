@@ -3,6 +3,7 @@ from src.data_utils.utils import get_word_index
 
 
 from src.models.hmm import HmmNerModel
+import src.config as conf
 
 from typing import List
 from collections import Counter
@@ -15,7 +16,7 @@ from string import punctuation
 # stops = set(punctuation)
 # stops.update(set(punctuation))
 # stops.update({'-X-', ',', '$', ':', '-DOCSTART-'})
-stops = {}
+stops = set()
 
 
 def train_hmm_ner(sentences: List[LabeledSentence]) -> HmmNerModel:
@@ -28,7 +29,7 @@ def train_hmm_ner(sentences: List[LabeledSentence]) -> HmmNerModel:
     """
     tag_indexer = Indexer()
     word_indexer = Indexer()
-    word_indexer.add_and_get_index("__UNK__")
+    word_indexer.add_and_get_index(conf.UNK_TOKEN)
     word_counter = Counter()
     for sentence in sentences:
         for token in sentence.tokens:

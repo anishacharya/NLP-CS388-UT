@@ -10,6 +10,7 @@ from src.evaluation.ner_eval import print_evaluation_metric, write_test_output
 from src.classifiers.MLP_BinaryNER import train_model_based_binary_ner
 from src.classifiers.label_count_driver import train_label_count_ner, train_label_count_binary_ner
 from src.classifiers.hmm_ner_driver import train_hmm_ner
+from src.classifiers.crf_ner_driver import train_crf_ner
 
 import src.config as config
 import argparse
@@ -41,7 +42,7 @@ def _parse_args():
                         help='path to dev set (you should not need to modify)')
     parser.add_argument('--test_output_path', type=str, default=config.output_path,
                         help='output path for test predictions')
-    parser.add_argument('--no_run_on_test', dest='run_on_test', default=False, action='store_false',
+    parser.add_argument('--no_run_on_test', dest='run_on_test', default=config.run_on_test_flag, action='store_false',
                         help='skip printing output on the test set')
     args = parser.parse_args()
     return args
@@ -54,13 +55,8 @@ if __name__ == '__main__':
 
     """ Load the training and test data """
     train_data = read_data(args.train_path)
-    # TODO: Remove this after debugging
-    # train_data = train_data[0:1000]
 
     dev_data = read_data(args.dev_path)
-    # TODO: Remove this after debugging
-    # dev_data = dev_data[1:10]
-
     test_data = read_data(args.blind_test_path)
 
     if args.mode == 'binary':
@@ -98,6 +94,9 @@ if __name__ == '__main__':
             dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
         elif args.model == "HMM":
             model = train_hmm_ner(train_data)
+            dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
+        elif args.model == "CRF":
+            model = train_crf_ner(train_data)
             dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
         else:
             raise NotImplementedError("The {} model for {} mode is not implemented yet".format(args.model, args.mode))

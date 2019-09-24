@@ -1,6 +1,7 @@
 from collections import Counter
 from typing import List, Set
 from src.data_utils.definitions import PersonExample, Indexer
+import src.config as conf
 
 
 def create_index(ner_exs: List[PersonExample], stops: Set) -> [Indexer, Indexer]:
@@ -8,8 +9,8 @@ def create_index(ner_exs: List[PersonExample], stops: Set) -> [Indexer, Indexer]
     pos_ix = Indexer()
 
     # create index for unseen objects
-    word_ix.add_and_get_index('__UNK__')
-    pos_ix.add_and_get_index('__UNK__')
+    word_ix.add_and_get_index(conf.UNK_TOKEN)
+    pos_ix.add_and_get_index(conf.UNK_TOKEN)
 
     for ex in ner_exs:
         for idx in range(0, len(ex)):
@@ -36,7 +37,7 @@ def get_word_index(word_indexer: Indexer, word_counter: Counter, stops: Set, wor
     :return: int of the word index
     """
     if word_counter[word] < 1.5 or word in stops:
-        return word_indexer.add_and_get_index("__UNK__")
+        return word_indexer.add_and_get_index(conf.UNK_TOKEN)
     else:
         return word_indexer.add_and_get_index(word)
 
@@ -63,12 +64,12 @@ def index_data(ner_exs: List[PersonExample], word_ix, pos_ix):
             if token.word.lower() in word_ix.objs_to_ints:
                 s.append(word_ix.objs_to_ints[token.word.lower()])
             else:
-                s.append(word_ix.objs_to_ints['__UNK__'])
+                s.append(word_ix.objs_to_ints[conf.UNK_TOKEN])
 
             if token.pos in pos_ix.objs_to_ints:
                 pos.append(pos_ix.objs_to_ints[token.pos])
             else:
-                pos.append(pos_ix.objs_to_ints['__UNK__'])
+                pos.append(pos_ix.objs_to_ints[conf.UNK_TOKEN])
         Sentences.append(s)
         POS.append(pos)
     return Sentences, POS, indexed_y
