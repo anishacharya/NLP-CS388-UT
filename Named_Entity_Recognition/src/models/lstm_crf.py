@@ -29,6 +29,7 @@ class CrfNerModel(nn.Module):
 
     def forward(self, sentence, mask=None):
         lstm_feat = self.lstm_feature_extractor(sentence)
+
         return self.crf.decode(lstm_feat, mask=mask)
 
     def nll(self, x, y, mask=None):

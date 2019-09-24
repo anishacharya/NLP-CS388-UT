@@ -45,14 +45,30 @@ def train_crf_ner(sentences: [LabeledSentence]):
         for tag in sentence.get_bio_tags():
             tag_indexer.add_and_get_index(tag)
 
+    # feature_indexer = Indexer()
+    # # 4-d list indexed by sentence index, word index, tag index, feature index
+    # feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in
+    #                   range(0, len(sentences[i]))] for i in range(0, len(sentences))]
+    # for sentence_idx in range(0, len(sentences)):
+    #     if sentence_idx % 100 == 0:
+    #         print("Ex %i/%i" % (sentence_idx, len(sentences)))
+    #     for word_idx in range(0, len(sentences[sentence_idx])):
+    #         for tag_idx in range(0, len(tag_indexer)):
+    #             feature_cache[sentence_idx][word_idx][tag_idx] = \
+    #                 extract_emission_features(sentences[sentence_idx].tokens, word_idx,
+    #                                           tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
+
     # Call to the crf model which learns features jointly
     crf_model = CrfNerModel(word_ix=word_indexer, tag_ix=tag_indexer,
                             embedding_dim=conf.embedding_dim, hidden_dim=conf.hidden_dim)
-    optimizer = optim.SGD(crf_model.parameters(), lr=conf.initial_lr, weight_decay=conf.weight_decay)
+    # optimizer = optim.SGD(crf_model.parameters(), lr=conf.initial_lr, weight_decay=conf.weight_decay)
     PAD_ID = word_indexer.objs_to_ints[conf.PAD_TOKEN]
     PAD_TAG_ID = tag_indexer.objs_to_ints[conf.PAD_TOKEN]
 
+    lr = conf.initial_lr
     for epoch in range(conf.epochs):
+        # optimizer = optim.SGD(crf_model.parameters(), lr=lr, weight_decay=conf.weight_decay)
+        optimizer = torch.optim.Adam(crf_model.parameters(), lr=lr)
         with torch.no_grad():
             x1 = prepare_data_point(sentences[1], word_indexer=word_indexer)
             x_test = torch.full((1, len(x1)), PAD_ID, dtype=torch.long)
@@ -83,6 +99,7 @@ def train_crf_ner(sentences: [LabeledSentence]):
             loss = crf_model.nll(x, y, mask=mask)
             loss.backward()
             optimizer.step()
+        lr = lr/2
+        if (epoch + 1) % 5 == 0:
+            lr = conf.initial_lr
     return crf_model
-    # print("Training")
-    # raise Exception("IMPLEMENT THE REST OF ME")

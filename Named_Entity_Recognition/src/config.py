@@ -10,11 +10,11 @@ run_on_test_flag = True
 """ define model hyper-parameters here """
 glove_file = '/Users/anishacharya/Desktop/glove.6B/glove.6B.300d.txt'
 epochs = 15
-batch_size = 32
+batch_size = 64
 initial_lr = 0.01
 weight_decay = 1e-4
 no_of_classes = 2
-embedding_dim = 100
+embedding_dim = 50
 hidden_dim = 10
 
 # define special symbols to handle padding etc
