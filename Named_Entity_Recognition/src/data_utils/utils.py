@@ -2,15 +2,8 @@ from collections import Counter
 from typing import List, Set
 from src.data_utils.definitions import PersonExample, Indexer
 
-from nltk.corpus import stopwords
-from string import punctuation
-
 
 def create_index(ner_exs: List[PersonExample], stops: Set) -> [Indexer, Indexer]:
-    stops = set(stopwords.words("english"))
-    stops.update(set(punctuation))
-    stops.update({'-X-', ',', '$', ':', '-DOCSTART-'})
-    # stops = set()
     word_ix = Indexer()
     pos_ix = Indexer()
 

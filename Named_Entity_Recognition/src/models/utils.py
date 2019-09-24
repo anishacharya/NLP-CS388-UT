@@ -24,16 +24,24 @@ class ProbabilisticSequenceScorer(object):
         self.transition_log_probs = transition_log_probs
         self.emission_log_probs = emission_log_probs
 
-    def score_init(self, sentence_tokens: List[Token], tag_idx: int):
+    def score_init(self, tag_idx: int):
         return self.init_log_probs[tag_idx]
 
-    def score_transition(self, sentence_tokens: List[Token], prev_tag_idx: int, curr_tag_idx: int):
+    def score_transition(self, prev_tag_idx: int, curr_tag_idx: int):
         return self.transition_log_probs[prev_tag_idx, curr_tag_idx]
 
     def score_emission(self, sentence_tokens: List[Token], tag_idx: int, word_posn: int):
         word = sentence_tokens[word_posn].word
-        word_idx = self.word_indexer.index_of(word) if self.word_indexer.contains(word) else self.word_indexer.index_of("UNK")
+        word_idx = self.word_indexer.index_of(word) if self.word_indexer.contains(word) \
+            else self.word_indexer.index_of("__UNK__")
         return self.emission_log_probs[tag_idx, word_idx]
+
+
+def dptable(V):
+    # Print a table of steps from dictionary
+    yield " ".join(("%12d" % i) for i in range(len(V)))
+    for state in V[0]:
+        yield "%.7s: " % state + " ".join("%.7s" % ("%f" % v[state]["prob"]) for v in V)
 
 
 def load_word_embedding(pretrained_embedding_filename, word2index_vocab):

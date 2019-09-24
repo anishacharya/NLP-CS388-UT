@@ -54,7 +54,13 @@ if __name__ == '__main__':
 
     """ Load the training and test data """
     train_data = read_data(args.train_path)
+    # TODO: Remove this after debugging
+    # train_data = train_data[0:1000]
+
     dev_data = read_data(args.dev_path)
+    # TODO: Remove this after debugging
+    # dev_data = dev_data[1:10]
+
     test_data = read_data(args.blind_test_path)
 
     if args.mode == 'binary':
@@ -92,6 +98,7 @@ if __name__ == '__main__':
             dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
         elif args.model == "HMM":
             model = train_hmm_ner(train_data)
+            dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
         else:
             raise NotImplementedError("The {} model for {} mode is not implemented yet".format(args.model, args.mode))
 

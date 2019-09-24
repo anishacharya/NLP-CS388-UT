@@ -42,7 +42,8 @@ class LabelCount(object):
         pred_tags = []
         for tok in sentence_tokens:
             if tok.word in self.words_to_tag_counters:
-                # [0] selects the top most common (tag, count) pair, the next [0] picks out the tag itself
+                # [0] selects the top most common [(tag, count)] pair - as most_common returns a list
+                # of tuples, the next [0] picks out the tag itself
                 pred_tags.append(self.words_to_tag_counters[tok.word].most_common(1)[0][0])
             else:
                 pred_tags.append("O")
