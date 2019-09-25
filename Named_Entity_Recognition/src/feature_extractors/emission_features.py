@@ -56,4 +56,7 @@ def extract_emission_features(sentence_tokens: List[Token], word_index: int, tag
         else:
             new_word += "?"
     maybe_add_feature(feats, feature_indexer, add_to_indexer, tag + ":WordShape=" + repr(new_word))
+
+    while len(feats) < 14:
+        feats.append(0)
     return np.asarray(feats, dtype=int)

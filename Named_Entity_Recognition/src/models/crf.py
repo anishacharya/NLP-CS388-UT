@@ -1,10 +1,11 @@
 import torch
 from torch import nn
+import numpy as np
 
 
 class CRF(nn.Module):
     def __init__(
-        self, nb_labels, bos_tag_id, eos_tag_id, pad_tag_id=None, batch_first=True
+        self, nb_labels, bos_tag_id, eos_tag_id, nb_features, pad_tag_id=None, batch_first=True,
     ):
         super().__init__()
 
@@ -13,11 +14,14 @@ class CRF(nn.Module):
         self.EOS_TAG_ID = eos_tag_id
         self.PAD_TAG_ID = pad_tag_id
         self.batch_first = batch_first
+        self.nb_features = nb_features
 
         self.transitions = nn.Parameter(torch.empty(self.nb_labels, self.nb_labels))
+
         self.init_weights()
 
     def init_weights(self):
+        nn.init.uniform_(self.transitions, -0.1, 0.1)
         nn.init.uniform_(self.transitions, -0.1, 0.1)
         self.transitions.data[:, self.BOS_TAG_ID] = -10000.0
         self.transitions.data[self.EOS_TAG_ID, :] = -10000.0

@@ -31,6 +31,7 @@ def print_evaluation_metric(gold_sentences: List[LabeledSentence], guess_sentenc
     print("Labeled F1: " + "{0:.2f}".format(f1 * 100) +\
           ", precision: %i/%i" % (correct, num_pred) + " = " + "{0:.2f}".format(prec * 100) + \
           ", recall: %i/%i" % (correct, num_gold) + " = " + "{0:.2f}".format(rec * 100))
+    return f1
 
 
 # Writes labeled_sentences to outfile in the CoNLL format

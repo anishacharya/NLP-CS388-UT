@@ -4,6 +4,7 @@ from src.models.lstm_crf import CrfNerModel
 import src.config as conf
 from src.data_utils.utils import get_word_index
 from src.models.utils import prepare_data_point, prepare_label_point
+import numpy as np
 
 from collections import Counter
 from nltk.corpus import stopwords
@@ -45,18 +46,18 @@ def train_crf_ner(sentences: [LabeledSentence]):
         for tag in sentence.get_bio_tags():
             tag_indexer.add_and_get_index(tag)
 
-    # feature_indexer = Indexer()
-    # # 4-d list indexed by sentence index, word index, tag index, feature index
-    # feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in
-    #                   range(0, len(sentences[i]))] for i in range(0, len(sentences))]
-    # for sentence_idx in range(0, len(sentences)):
-    #     if sentence_idx % 100 == 0:
-    #         print("Ex %i/%i" % (sentence_idx, len(sentences)))
-    #     for word_idx in range(0, len(sentences[sentence_idx])):
-    #         for tag_idx in range(0, len(tag_indexer)):
-    #             feature_cache[sentence_idx][word_idx][tag_idx] = \
-    #                 extract_emission_features(sentences[sentence_idx].tokens, word_idx,
-    #                                           tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
+    feature_indexer = Indexer()
+    # 4-d list indexed by sentence index, word index, tag index, feature index
+    feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in
+                      range(0, len(sentences[i]))] for i in range(0, len(sentences))]
+    for sentence_idx in range(0, len(sentences)):
+        if sentence_idx % 100 == 0:
+            print("Ex %i/%i" % (sentence_idx, len(sentences)))
+        for word_idx in range(0, len(sentences[sentence_idx])):
+            for tag_idx in range(0, len(tag_indexer)):
+                feature_cache[sentence_idx][word_idx][tag_idx] = \
+                    extract_emission_features(sentences[sentence_idx].tokens, word_idx,
+                                              tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
 
     # Call to the crf model which learns features jointly
     crf_model = CrfNerModel(word_ix=word_indexer, tag_ix=tag_indexer,
@@ -75,28 +76,35 @@ def train_crf_ner(sentences: [LabeledSentence]):
             x_test[0, :x1.shape[0]] = x1
             print("predicted labels :", crf_model(x_test))
             print("true labels:", prepare_label_point(sentence=sentences[1], tag_indexer=tag_indexer))
-        for i in range(0, len(sentences), conf.batch_size):
+        # for i in range(0, len(sentences), conf.batch_size):
+        #     crf_model.zero_grad()
+        #
+        #     if len(sentences[i:]) <= conf.batch_size:
+        #         data_batch = sentences[i:]
+        #     else:
+        #         data_batch = sentences[i: i + conf.batch_size]
+        #
+        #     max_sent_size = max([len(sentence) for sentence in data_batch])
+        #
+        #     x = torch.full((len(data_batch), max_sent_size), PAD_ID, dtype=torch.long)
+        #     y = torch.full((len(data_batch), max_sent_size), PAD_TAG_ID, dtype=torch.long)
+        #
+        #     for i in range(0, len(data_batch)):
+        #         x1 = prepare_data_point(sentence=data_batch[i], word_indexer=word_indexer)
+        #         y1 = prepare_label_point(sentence=data_batch[i], tag_indexer=tag_indexer)
+        #         x[i, : x1.shape[0]] = x1
+        #         y[i, : y1.shape[0]] = y1
+        #
+        #     mask = (y != PAD_TAG_ID).float()
+        #     loss = crf_model.nll(x, y, mask=mask)
+        #     loss.backward()
+        #     optimizer.step()
+        for ix, sentence in enumerate(sentences):
+            x = np.array(feature_cache[ix])
+            # x2 = prepare_data_point(sentence, word_indexer)
+            y = prepare_label_point(sentence, tag_indexer)
             crf_model.zero_grad()
-
-            if len(sentences[i:]) <= conf.batch_size:
-                data_batch = sentences[i:]
-            else:
-                data_batch = sentences[i: i + conf.batch_size]
-
-            max_sent_size = max([len(sentence) for sentence in data_batch])
-
-            x = torch.full((len(data_batch), max_sent_size), PAD_ID, dtype=torch.long)
-            y = torch.full((len(data_batch), max_sent_size), PAD_TAG_ID, dtype=torch.long)
-
-            for i in range(0, len(data_batch)):
-                x1 = prepare_data_point(sentence=data_batch[i], word_indexer=word_indexer)
-                y1 = prepare_label_point(sentence=data_batch[i], tag_indexer=tag_indexer)
-                x[i, : x1.shape[0]] = x1
-                y[i, : y1.shape[0]] = y1
-
-            mask = (y != PAD_TAG_ID).float()
-
-            loss = crf_model.nll(x, y, mask=mask)
+            loss = crf_model.nll(x, y)
             loss.backward()
             optimizer.step()
         lr = lr/2

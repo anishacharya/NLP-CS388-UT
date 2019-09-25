@@ -11,7 +11,6 @@ def create_index(ner_exs: List[PersonExample], stops: Set) -> [Indexer, Indexer]
     # create index for unseen objects
     word_ix.add_and_get_index(conf.UNK_TOKEN)
     pos_ix.add_and_get_index(conf.UNK_TOKEN)
-
     for ex in ner_exs:
         for idx in range(0, len(ex)):
             token = ex.tokens[idx].word
@@ -24,7 +23,7 @@ def create_index(ner_exs: List[PersonExample], stops: Set) -> [Indexer, Indexer]
     return word_ix, pos_ix
 
 
-def get_word_index(word_indexer: Indexer, word_counter: Counter, stops: Set, word: str) -> int:
+def get_word_index(word_indexer: Indexer, word_counter: Counter, stops: Set, word: str, th: float =1.5) -> int:
 
     """
     Retrieves a word's index based on its count. If the word occurs only once, treat it as an "UNK" token
@@ -36,7 +35,7 @@ def get_word_index(word_indexer: Indexer, word_counter: Counter, stops: Set, wor
     :param word: string word
     :return: int of the word index
     """
-    if word_counter[word] < 1.5 or word in stops:
+    if word_counter[word] < th or word in stops:
         return word_indexer.add_and_get_index(conf.UNK_TOKEN)
     else:
         return word_indexer.add_and_get_index(word)
