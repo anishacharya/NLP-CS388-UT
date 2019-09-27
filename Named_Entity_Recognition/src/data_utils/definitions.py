@@ -308,8 +308,8 @@ def chunks_from_bio_tag_seq(bio_tags: List[str]) -> List[Chunk]:
             curr_tok_start = idx
         elif isI(tag):
             label = get_tag_label(tag)
-            if label != curr_tok_label:
-                print("WARNING: invalid tag sequence (I after O); ignoring the I: %s" % bio_tags)
+            # if label != curr_tok_label:
+                # print("WARNING: invalid tag sequence (I after O); ignoring the I: %s" % bio_tags)
         else: # isO(tag):
             if curr_tok_label != "":
                 chunks.append(Chunk(curr_tok_start, idx, curr_tok_label))

@@ -1,6 +1,6 @@
 from src.data_utils.definitions import Indexer, LabeledSentence
 from src.feature_extractors.emission_features import extract_emission_features
-from src.models.lstm_crf import CrfNerModel
+from src.models.lstm_crf import LSTMCrfNerModel
 import src.config as conf
 from src.data_utils.utils import get_word_index
 from src.models.utils import prepare_data_point, prepare_label_point
@@ -48,20 +48,20 @@ def train_crf_ner(sentences: [LabeledSentence]):
 
     feature_indexer = Indexer()
     # 4-d list indexed by sentence index, word index, tag index, feature index
-    feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in
-                      range(0, len(sentences[i]))] for i in range(0, len(sentences))]
-    for sentence_idx in range(0, len(sentences)):
-        if sentence_idx % 100 == 0:
-            print("Ex %i/%i" % (sentence_idx, len(sentences)))
-        for word_idx in range(0, len(sentences[sentence_idx])):
-            for tag_idx in range(0, len(tag_indexer)):
-                feature_cache[sentence_idx][word_idx][tag_idx] = \
-                    extract_emission_features(sentences[sentence_idx].tokens, word_idx,
-                                              tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
+    # feature_cache = [[[[] for k in range(0, len(tag_indexer))] for j in
+    #                   range(0, len(sentences[i]))] for i in range(0, len(sentences))]
+    # for sentence_idx in range(0, len(sentences)):
+    #     if sentence_idx % 100 == 0:
+    #         print("Ex %i/%i" % (sentence_idx, len(sentences)))
+    #     for word_idx in range(0, len(sentences[sentence_idx])):
+    #         for tag_idx in range(0, len(tag_indexer)):
+    #             feature_cache[sentence_idx][word_idx][tag_idx] = \
+    #                 extract_emission_features(sentences[sentence_idx].tokens, word_idx,
+    #                                           tag_indexer.get_object(tag_idx), feature_indexer, add_to_indexer=True)
 
     # Call to the crf model which learns features jointly
-    crf_model = CrfNerModel(word_ix=word_indexer, tag_ix=tag_indexer,
-                            embedding_dim=conf.embedding_dim, hidden_dim=conf.hidden_dim)
+    crf_model = LSTMCrfNerModel(word_ix=word_indexer, tag_ix=tag_indexer,
+                                embedding_dim=conf.embedding_dim, hidden_dim=conf.hidden_dim)
     # optimizer = optim.SGD(crf_model.parameters(), lr=conf.initial_lr, weight_decay=conf.weight_decay)
     PAD_ID = word_indexer.objs_to_ints[conf.PAD_TOKEN]
     PAD_TAG_ID = tag_indexer.objs_to_ints[conf.PAD_TOKEN]
@@ -100,8 +100,8 @@ def train_crf_ner(sentences: [LabeledSentence]):
         #     loss.backward()
         #     optimizer.step()
         for ix, sentence in enumerate(sentences):
-            x = np.array(feature_cache[ix])
-            # x2 = prepare_data_point(sentence, word_indexer)
+            #x = np.array(feature_cache[ix])
+            x = prepare_data_point(sentence, word_indexer)
             y = prepare_label_point(sentence, tag_indexer)
             crf_model.zero_grad()
             loss = crf_model.nll(x, y)

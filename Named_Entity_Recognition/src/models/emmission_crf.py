@@ -6,7 +6,12 @@ import src.config as conf
 from src.data_utils.definitions import LabeledSentence, chunks_from_bio_tag_seq
 from src.feature_extractors.emission_features import extract_emission_features
 from src.utils.utils import flatten
-
+"""
+Author: Anish Acharya
+Adopted from: 
+~/cite https://pytorch.org/tutorials/beginner/nlp
+~/cite https://www.cs.utexas.edu/~gdurrett/courses/fa2019/cs388.shtml
+"""
 
 class EmissionCrfNerModel(nn.Module):
     def __init__(self, word_ix, tag_ix, feature_cache, feature_dim, feature_ix):

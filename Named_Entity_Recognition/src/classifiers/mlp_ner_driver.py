@@ -1,132 +1,30 @@
+import time
+from collections import Counter
 from random import shuffle
+from string import punctuation
 from typing import List, Dict
 
 import numpy as np
 import torch
 import torch.nn as nn
-import time
-
-from src.data_utils.definitions import PersonExample, Indexer
-from src.data_utils.utils import index_data
-from src.models.utils import load_word_embedding
-from src.feature_extractors.embedding_features import get_word_embedding
-from src.data_utils.utils import get_word_index
-from collections import Counter
-from src.utils.utils import flatten
-import src.config as conf
-
 from nltk.corpus import stopwords
-from string import punctuation
 
+import src.config as conf
+from src.data_utils.definitions import Indexer, LabeledSentence
+from src.data_utils.utils import get_word_index
+from src.feature_extractors.embedding_features import get_word_embedding, get_context_vector
+from src.models.utils import load_word_embedding
+from src.utils.utils import flatten
+from src.models.mlp import MLPNerClassifier
+from src.evaluation.ner_eval import write_test_output, print_evaluation_metric
+from src.data_utils.utils import inverse_idx_sentence
+from src.feature_extractors.indicator_features import pos_indicator_feat,is_upper_indicator_feat,all_caps_indicator_feat
+from src.models.utils import get_triangular_lr
 
-stops = set(stopwords.words("english"))
+stops = set()
+stops.update(stopwords.words("english"))
 stops.update(set(punctuation))
 stops.update({'-X-', ',', '$', ':', '-DOCSTART-'})
-
-
-class MLPNerClassifier(object):
-    """
-    Classifier to classify a token in a sentence as a PERSON token or not.
-    Constructor arguments are merely suggestions; you're free to change these.
-    """
-
-    def __init__(self, model, word_ix: Indexer, pos_ix: Indexer, ix2embed: Dict):
-        self.model = model
-        self.word_ix = word_ix
-        self.pos_ix = pos_ix
-        self.ix2embed = ix2embed
-
-    def predict(self, tokens: List[str], idx: int):
-        """
-        Makes a prediction for token at position idx in the given PersonExample
-        Returns 0 if not a person token, 1 if a person token
-        """
-        token = tokens[idx]
-
-        "Word Indicator"
-        # word_indicator_feat_dim = len(self.word_ix)
-        # word_indicator = [0] * word_indicator_feat_dim
-        # if token.word.lower() in self.word_ix.objs_to_ints:
-        #     ix = self.word_ix.objs_to_ints[token.word.lower()]
-        #     word_indicator[ix] = 1
-        # else:
-        #     word_indicator[self.word_ix.objs_to_ints['__UNK__']] = 1
-
-        "pos indicator"
-        # pos_indicator_feat_dim = len(self.pos_ix)
-        # pos_indicator = [0] * pos_indicator_feat_dim
-        # if token.pos in self.pos_ix.objs_to_ints:
-        #     ix = self.pos_ix.objs_to_ints[token.pos]
-        #     pos_indicator[ix] = 1
-        # else:
-        #     pos_indicator[self.pos_ix.objs_to_ints['__UNK__']] = 1
-        #
-        "starts with a capital"
-        # is_upper = is_upper_indicator_feat(word=token.word, idx=idx)
-        # # all caps
-        # is_all_caps = all_caps_indicator_feat(word=token.word)
-
-        " Current word Embedding "
-        if token.word.lower() in self.word_ix.objs_to_ints:
-            token_ix = self.word_ix.objs_to_ints[token.word.lower()]
-        else:
-            token_ix = self.word_ix.objs_to_ints['__UNK__']
-        if token_ix in self.ix2embed:
-            word_emb = self.ix2embed[token_ix]
-        else:
-            word_emb = self.ix2embed[self.word_ix.objs_to_ints['__UNK__']]
-
-        # Context vector
-        # sentence = [token.word for token in tokens]
-        # context_window_1 = get_context_vector(tokens=sentence,
-        #                                       idx=idx,
-        #                                       window_len=1,
-        #                                       word2ix=self.word_ix.objs_to_ints,
-        #                                       ix2embed=self.ix2embed)
-
-        # context_window_2 = get_context_vector(tokens=sentence,
-        #                                       idx=idx,
-        #                                       window_len=2,
-        #                                       word2ix=self.word_ix.objs_to_ints,
-        #                                       ix2embed=self.ix2embed)
-        # context_left_1 = get_context_vector(tokens=sentence,
-        #                                     idx=idx,
-        #                                     window_len=1,
-        #                                     word2ix=self.word_ix.objs_to_ints,
-        #                                     ix2embed=self.ix2embed,
-        #                                     left=True)
-        # context_left_2 = get_context_vector(tokens=sentence,
-        #                                     idx=idx,
-        #                                     window_len=2,
-        #                                     word2ix=self.word_ix.objs_to_ints,
-        #                                     ix2embed=self.ix2embed,
-        #                                     left=True)
-        # context_right_1 = get_context_vector(tokens=sentence,
-        #                                     idx=idx,
-        #                                     window_len=1,
-        #                                     word2ix=self.word_ix.objs_to_ints,
-        #                                     ix2embed=self.ix2embed,
-        #                                     right=True)
-        feat_vec = []
-        # feat_vec = feat_vec + word_indicator
-        # feat_vec = feat_vec + pos_indicator
-        # feat_vec = feat_vec + is_upper
-        # feat_vec = feat_vec + is_all_caps
-        #
-        feat_vec = feat_vec + word_emb
-        # feat_vec = feat_vec + context_window_1
-        # feat_vec = feat_vec + context_window_2
-        # feat_vec = feat_vec + context_left_1
-        # feat_vec = feat_vec + context_left_2
-        # feat_vec = feat_vec + context_right_1
-
-        x_test = torch.FloatTensor(feat_vec)
-        y_hat_test = self.model(x_test)
-
-        max_ix = y_hat_test.index(max(y_hat_test))
-        #if y_hat_test[0] > y_hat_test[1]:
-        #    return 0
-        #return 1
 
 
 def get_features(sentence: List,
@@ -139,9 +37,9 @@ def get_features(sentence: List,
 
     "collect 1-hot / Indicator Features"
     # word_indicator = word_indicator_feat(sentence=sentence, word_ix=word_ix, idx=idx)
-    # pos_indicator = pos_indicator_feat(pos=pos, pos_ix=pos_ix, idx=idx)
-    # is_upper_indicator = is_upper_indicator_feat(word=word, idx=idx)
-    # all_caps_indicator = all_caps_indicator_feat(word=word)
+    pos_indicator = pos_indicator_feat(pos=pos, pos_ix=pos_ix, idx=idx)
+    is_upper_indicator = is_upper_indicator_feat(word=word, idx=idx)
+    all_caps_indicator = all_caps_indicator_feat(word=word)
 
     "collect word embedding features"
     word_embed = get_word_embedding(word=word,
@@ -149,12 +47,12 @@ def get_features(sentence: List,
                                     word2ix=word_ix.objs_to_ints)
 
     "get context window __ | __ embedding (average)"
-    # tokens = inverse_idx_sentence(sentence, ix2word=word_ix.ints_to_objs)
-    # context_window_1 = get_context_vector(tokens=tokens,
-    #                                       idx=idx,
-    #                                       window_len=1,
-    #                                       word2ix=word_ix.objs_to_ints,
-    #                                       ix2embed=embed_ix)
+    tokens = inverse_idx_sentence(sentence, ix2word=word_ix.ints_to_objs)
+    context_window_1 = get_context_vector(tokens=tokens,
+                                          idx=idx,
+                                          window_len=1,
+                                          word2ix=word_ix.objs_to_ints,
+                                          ix2embed=embed_ix)
     # context_window_2 = get_context_vector(tokens=tokens,
     #                                       idx=idx,
     #                                       window_len=2,
@@ -183,12 +81,12 @@ def get_features(sentence: List,
     feature = []
 
     # feature = feature + word_indicator
-    # feature = feature + pos_indicator
-    # feature = feature + is_upper_indicator
-    # feature = feature + all_caps_indicator
+    feature = feature + pos_indicator
+    feature = feature + is_upper_indicator
+    feature = feature + all_caps_indicator
     # #
     feature = feature + word_embed
-    # feature = feature + context_window_1
+    feature = feature + context_window_1
     # # feature = feature + context_window_2
     # feature = feature + context_left_1
     # # feature = feature + context_left_2
@@ -196,7 +94,7 @@ def get_features(sentence: List,
     return feature
 
 
-def train_model_based_binary_ner(train_data: List[PersonExample]):
+def train_mlp_ner(train_data: List[LabeledSentence], dev_data, test_data):
     shuffle(train_data)
     """
     =======================================
@@ -223,20 +121,42 @@ def train_model_based_binary_ner(train_data: List[PersonExample]):
     for sentence in train_data:
         for token in sentence.tokens:
             # If the word occurs fewer than two times, don't index it -- we'll treat it as UNK
-            get_word_index(word_indexer=word_ix, word_counter=word_counter, stops=stops, word=token.word, th=0)
+            get_word_index(word_indexer=word_ix, word_counter=word_counter, stops=stops, word=token.word.lower(), th=0)
             pos_ix.add_and_get_index(token.pos)
         for tag in sentence.get_bio_tags():
             tag_ix.add_and_get_index(tag)
 
     ix2embedding = load_word_embedding(pretrained_embedding_filename=conf.glove_file,
                                        word2index_vocab=word_ix.objs_to_ints)
+    train_sent = []
+    POS = []
+    train_labels = []
 
-    train_sent, POS, train_lables = index_data(train_data, word_ix, pos_ix)
+    for sentence in train_data:
+        s = []
+        pos = []
+        labels = []
+        for token in sentence.tokens:
+            if token.word.lower() in word_ix.objs_to_ints:
+                s.append(word_ix.objs_to_ints[token.word.lower()])
+            else:
+                s.append(word_ix.objs_to_ints[conf.UNK_TOKEN])
+
+            if token.pos in pos_ix.objs_to_ints:
+                pos.append(pos_ix.objs_to_ints[token.pos])
+            else:
+                pos.append(pos_ix.objs_to_ints[conf.UNK_TOKEN])
+
+        for tag in sentence.get_bio_tags():
+            labels.append(tag_ix.objs_to_ints[tag])
+        train_sent.append(s)
+        POS.append(pos)
+        train_labels.append(labels)
 
     epochs = conf.epochs
     batch_size = conf.batch_size
     initial_lr = conf.initial_lr
-    no_of_classes = conf.no_of_classes
+    no_of_classes = len(tag_ix)
 
     """
     ==================================
@@ -258,21 +178,21 @@ def train_model_based_binary_ner(train_data: List[PersonExample]):
     feat_dim = 0
 
     # feat_dim += word_indicator_feat_dim
-    # feat_dim += pos_indicator_feat_dim
-    # feat_dim += is_upper_feat_dim
-    # feat_dim += all_caps_indicator_feat_dim
+    feat_dim += pos_indicator_feat_dim
+    feat_dim += is_upper_feat_dim
+    feat_dim += all_caps_indicator_feat_dim
     #
     feat_dim += word_embedding_feat_dim
-    # feat_dim += context_window_1
+    feat_dim += context_window_1
     # feat_dim += context_window_2
     # feat_dim += context_left_1
     # # feat_dim += context_left_2
     # feat_dim += context_right_1
 
     n_input_dim = feat_dim
-    n_hidden1 = 32  # Number of hidden nodes
-    n_hidden2 = 16
-    n_hidden3 = 8
+    n_hidden1 = 64  # Number of hidden nodes
+    n_hidden2 = 32
+    n_hidden3 = 16
     n_output = no_of_classes  # Number of output nodes = for binary classifier
 
     net = nn.Sequential(
@@ -290,6 +210,7 @@ def train_model_based_binary_ner(train_data: List[PersonExample]):
 
     learning_rate = initial_lr
 
+    best_f1 = 0
     for epoch in range(epochs):
         t = time.time()
         """
@@ -303,7 +224,7 @@ def train_model_based_binary_ner(train_data: List[PersonExample]):
                 data_batch = train_sent[i: i + batch_size]
                 pos_batch = POS[i: i + batch_size]
 
-            Y_train = flatten(train_lables[i: i + batch_size])
+            Y_train = flatten(train_labels[i: i + batch_size])
             optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
             loss_func = nn.BCELoss()
             Y_train = np.asarray(Y_train)
@@ -315,6 +236,7 @@ def train_model_based_binary_ner(train_data: List[PersonExample]):
 
             # One hot
             y_train_one_hot = np.zeros((Y_train.size, no_of_classes))
+
             for ix, n in enumerate(Y_train):
                 y_train_one_hot[ix, n] = 1
             Y_train = y_train_one_hot
@@ -330,19 +252,28 @@ def train_model_based_binary_ner(train_data: List[PersonExample]):
             optimizer.step()
             optimizer.zero_grad()
 
-        print("Epoch : ", epoch)
-        print("Time taken", time.time() - t)
-        print("Learning Rate = ", learning_rate)
+        model = MLPNerClassifier(model=net,
+                                 word_ix=word_ix,
+                                 pos_ix=pos_ix,
+                                 tag_ix=tag_ix,
+                                 ix2embed=ix2embedding)
+        # Compute Dev Acc.
         # if (epoch + 1) % 3 == 0:
-        #     learning_rate = initial_lr*2
+        dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
+        f1 = print_evaluation_metric(dev_data, dev_decoded)
+        if f1 > best_f1:
+            test_decoded = [model.decode(test_ex.tokens) for test_ex in test_data]
+            write_test_output(test_decoded, conf.output_path)
 
-        # learning_rate = learning_rate / 2
+        print("-------------------------")
+        print("Epoch: ", epoch)
+        print("Time taken: ", time.time() - t)
+        print(" ")
+        print(" -------------------------")
         print("----------")
         print(" ")
 
-    return MLPNerClassifier(model=net,
-                            word_ix=word_ix,
-                            pos_ix=pos_ix,
-                            ix2embed=ix2embedding)
+    return model
+
 
 

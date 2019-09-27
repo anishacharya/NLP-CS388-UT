@@ -2,6 +2,13 @@ import torch
 from torch import nn
 import numpy as np
 
+"""
+Author: Anish Acharya
+Adopted from: 
+~/cite https://pytorch.org/tutorials/beginner/nlp
+~/cite https://www.cs.utexas.edu/~gdurrett/courses/fa2019/cs388.shtml
+"""
+
 
 class CRF(nn.Module):
     def __init__(

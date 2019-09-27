@@ -10,8 +10,9 @@ from src.evaluation.ner_eval import print_evaluation_metric, write_test_output
 from src.classifiers.MLP_BinaryNER import train_model_based_binary_ner
 from src.classifiers.label_count_driver import train_label_count_ner, train_label_count_binary_ner
 from src.classifiers.hmm_ner_driver import train_hmm_ner
-from src.classifiers.crf_ner_driver import train_crf_ner
+from src.classifiers.lstm_crf_ner_driver import train_crf_ner
 from src.classifiers.emmission_crf_driver import train_emission_crf_ner
+from src.classifiers.mlp_ner_driver import train_mlp_ner
 import src.config as config
 import argparse
 import time
@@ -55,9 +56,7 @@ if __name__ == '__main__':
 
     """ Load the training and test data """
     train_data = read_data(args.train_path)
-    # train_data = train_data[2:100]
     dev_data = read_data(args.dev_path)
-    # dev_data = dev_data[2:4]
     test_data = read_data(args.blind_test_path)
 
     if args.mode == 'binary':
@@ -103,7 +102,8 @@ if __name__ == '__main__':
             model = train_emission_crf_ner(train_data=train_data, dev_data=dev_data, test_data=test_data)
             dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
         elif args.model == "MLP":
-            pass
+            model = train_mlp_ner(train_data=train_data, dev_data=dev_data, test_data=test_data)
+            dev_decoded = [model.decode(test_ex.tokens) for test_ex in dev_data]
         else:
             raise NotImplementedError("The {} model for {} mode is not implemented yet".format(args.model, args.mode))
 

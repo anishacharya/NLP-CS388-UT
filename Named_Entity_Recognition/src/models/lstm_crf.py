@@ -8,9 +8,9 @@ from src.models.crf import CRF
 from src.models.utils import prepare_data_point
 
 
-class CrfNerModel(nn.Module):
+class LSTMCrfNerModel(nn.Module):
     def __init__(self, word_ix, tag_ix, embedding_dim, hidden_dim):
-        super(CrfNerModel, self).__init__()
+        super(LSTMCrfNerModel, self).__init__()
         self.word_ix = word_ix
         self.tag_ix = tag_ix
         self.vocab_size = len(word_ix)

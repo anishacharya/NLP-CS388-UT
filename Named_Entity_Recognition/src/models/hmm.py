@@ -86,6 +86,6 @@ class HmmNerModel(object):
         pred_tags = []
         for ix in most_likely_seq:
             pred_tags.append(self.tag_indexer.ints_to_objs[ix])
-        print('The steps of states are ' + ' '.join(pred_tags) + ' with highest log probability of %s' % max_prob)
+        # print('The steps of states are ' + ' '.join(pred_tags) + ' with highest log probability of %s' % max_prob)
 
         return LabeledSentence(sentence_tokens, chunks_from_bio_tag_seq(pred_tags))
