@@ -1,21 +1,24 @@
 import os
 import sys
-sys.path.append(os.path.dirname(__file__) + '../.')
-
-from src.data_utils.conll_reader import read_data, transform_label_for_binary_classification
-
-from src.evaluation.ner_binary_eval import evaluate_binary_classifier, predict_binary_write_output_to_file
-from src.evaluation.ner_eval import print_evaluation_metric, write_test_output
-
-from src.classifiers.MLP_BinaryNER import train_model_based_binary_ner
-from src.classifiers.label_count_driver import train_label_count_ner, train_label_count_binary_ner
-from src.classifiers.hmm_ner_driver import train_hmm_ner
-from src.classifiers.lstm_crf_ner_driver import train_crf_ner
-from src.classifiers.emmission_crf_driver import train_emission_crf_ner
-from src.classifiers.mlp_ner_driver import train_mlp_ner
-import src.config as config
 import argparse
 import time
+sys.path.append(os.path.dirname(__file__) + '../.')
+
+from Named_Entity_Recognition.src.data_utils.conll_reader import read_data, transform_label_for_binary_classification
+
+from Named_Entity_Recognition.src.evaluation.ner_binary_eval import evaluate_binary_classifier, \
+    predict_binary_write_output_to_file
+from Named_Entity_Recognition.src.evaluation.ner_eval import print_evaluation_metric, write_test_output
+
+from Named_Entity_Recognition.src.classifiers.MLP_BinaryNER import train_model_based_binary_ner
+from Named_Entity_Recognition.src.classifiers.label_count_driver import train_label_count_ner, \
+    train_label_count_binary_ner
+from Named_Entity_Recognition.src.classifiers.hmm_ner_driver import train_hmm_ner
+from Named_Entity_Recognition.src.classifiers.lstm_crf_ner_driver import train_crf_ner
+from Named_Entity_Recognition.src.classifiers.emmission_crf_driver import train_emission_crf_ner
+from Named_Entity_Recognition.src.classifiers.mlp_ner_driver import train_mlp_ner
+import Named_Entity_Recognition.src.config as config
+
 
 
 """
