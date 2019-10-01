@@ -14,7 +14,7 @@ class WordEmbedding:
     def load_word_embedding(self) -> Dict:
         """
         Read a GloVe txt file.we return dictionary
-        TODO: Extend for other embeddings
+        TODO: Extend for other embeddings [FastText]
         mapping index to embedding vector( index_to_embedding),
         relativize to train_data i.e. for words in the word indexer
         """
@@ -23,14 +23,19 @@ class WordEmbedding:
         with open(self.embedding_file, 'r') as glove_file:
             for (i, line) in enumerate(glove_file):
                 split = line.split(' ')
-                word = split[0]
-                ix = self.word_ix.get(word.lower())
-                if ix is not None:
+                word = split[0].lower()  # glove has lowercase only
+
+                if self.word_ix.contains(word):
+                    ix = self.word_ix.objs_to_ints[word]
                     representation = split[1:]
                     representation = np.array([float(val) for val in representation])
                     index_to_embedding[ix] = list(representation)
-        unk = self.word_ix[common_conf.UNK_TOKEN]
-        index_to_embedding[unk] = [0.0] * len(representation)  # Empty representation for unknown words.
+                else:
+                    print('Embedding not available for {}'.format(word))
+        embed_dim = len(index_to_embedding[0]) if index_to_embedding else 0
+
+        unk = self.word_ix.add_and_get_index(common_conf.UNK_TOKEN)
+        index_to_embedding[unk] = [0.0] * embed_dim     # Empty representation for unknown words.
 
         return index_to_embedding
 
@@ -38,11 +43,11 @@ class WordEmbedding:
         """
         Given a word returns the corresponding embedding vector
         """
-        ix = self.word_ix[word]
-        if ix in self.ix2embed:
-            word_embed = self.ix2embed[ix]
-        else:
-            word_embed = self.ix2embed[self.word_ix[common_conf.UNK_TOKEN]]
+        word = word.lower()
+        ix = self.word_ix.objs_to_ints[word] if self.word_ix.contains(word) \
+            else self.word_ix.objs_to_ints[common_conf.UNK_TOKEN]
+        word_embed = self.ix2embed[ix] if ix in self.ix2embed else self.ix2embed[self.word_ix[common_conf.UNK_TOKEN]]
+
         return word_embed
 
 
@@ -66,13 +71,13 @@ class SentenceEmbedding:
                 ix = self.word2ix[word]
             else:
                 ix = self.word2ix[common_conf.UNK_TOKEN]
-            if ix in self.ix2embedding:
-                embed_vector = [sum(x) for x in zip(embed_vector, self.ix2embedding[ix])]
+            if ix in self.ix2embed:
+                embed_vector = [sum(x) for x in zip(embed_vector, self.ix2embed[ix])]
             else:
                 embed_vector = [sum(x) for x in zip(embed_vector,
-                                                    self.ix2embedding[self.word2ix[common_conf.UNK_TOKEN]])]
+                                                    self.ix2embed[self.word2ix[common_conf.UNK_TOKEN]])]
 
-        sentence_embedding = [i/len(sentence) for i in embed_vector]
+        sentence_embedding = [i / len(sentence) for i in embed_vector]
         return sentence_embedding
 
     def get_average_context_embedding(self, tokens: List, idx: int, window_len: int, left=False, right=False):
@@ -112,4 +117,3 @@ class SentenceEmbedding:
     def sif_arora(self):
         # https://github.com/PrincetonML/SIF_mini_demo
         pass
-
