@@ -23,6 +23,6 @@ def get_xy(data: List[SentimentExample], word_embed: WordEmbedding):
         y[:, ix] = data_point.label
 
     x = torch.from_numpy(x).float()
-    y_onehot = torch.from_numpy(get_onehot_np(y=y, no_classes=sentiment_config.no_classes))
-
+    y_onehot_np = get_onehot_np(y=y, no_classes=sentiment_config.no_classes)
+    y_onehot = torch.from_numpy(y_onehot_np)
     return x, y_onehot

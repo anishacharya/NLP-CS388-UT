@@ -108,7 +108,7 @@ def word_dropout(dropout_prob: float) -> bool:
 
 
 def get_onehot_np(y: np.array, no_classes: int):
-    return np.eye(no_classes)[y]
+    return np.eye(no_classes, dtype=np.int64)[y]
 
 
 
