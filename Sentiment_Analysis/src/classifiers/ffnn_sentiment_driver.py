@@ -11,7 +11,9 @@ from typing import List
 import numpy as np
 from random import shuffle
 import torch
+
 import torch.optim as optim
+import torch.nn as nn
 
 
 def train_sentiment_ffnn(train_data: List[SentimentExample],
@@ -24,6 +26,7 @@ def train_sentiment_ffnn(train_data: List[SentimentExample],
     optimizer = optim.Adam(model.parameters(), lr=lr)
     epochs = sentiment_conf.ffnn_epochs
     batch_size = sentiment_conf.batch_size
+    loss_function = nn.BCELoss()
 
     for epoch in range(0, epochs):
         # shuffle data
@@ -35,7 +38,8 @@ def train_sentiment_ffnn(train_data: List[SentimentExample],
             model.zero_grad()
             probs = model.forward(x_batch)
             # Can also use built-in NLLLoss as a shortcut here (takes log probabilities) but we're being explicit here
-            loss = torch.neg(torch.log(probs)).dot(y_batch)
+            # loss = torch.neg(torch.log(probs)).dot(y_batch)
+            loss = loss_function(probs, y_batch)
             total_loss += loss
             loss.backward()
             optimizer.step()

@@ -14,7 +14,7 @@ def get_xy(data: List[SentimentExample], word_embed: WordEmbedding):
     # we will also get labels
     sentence_embed = SentenceEmbedding(word_embed=word_embed)
     x = np.zeros((len(data), word_embed.emb_dim), dtype=np.float32)
-    y = np.zeros((1, len(data)), dtype=np.int64)
+    y = np.zeros((1, len(data)), dtype=np.int32)    # np.eye won't work for float which we use to get one hot
 
     for ix, data_point in enumerate(data):
         sentence = data_point.indexed_words
@@ -22,7 +22,8 @@ def get_xy(data: List[SentimentExample], word_embed: WordEmbedding):
         x[ix, :] = sentence_embedding
         y[:, ix] = data_point.label
 
-    x = torch.from_numpy(x).float()
+    x = torch.from_numpy(x)
+
     y_onehot_np = get_onehot_np(y=y, no_classes=sentiment_config.no_classes)
     y_onehot = torch.from_numpy(y_onehot_np)
     return x, y_onehot
