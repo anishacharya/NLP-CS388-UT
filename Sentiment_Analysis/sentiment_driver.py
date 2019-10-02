@@ -9,7 +9,7 @@ import common.common_config as common_conf
 from common.utils.indexer import Indexer
 from common.utils.embedding import WordEmbedding
 
-import Sentiment_Analysis.sentiment_config as conf
+import Sentiment_Analysis.sentiment_config as sentiment_conf
 from Sentiment_Analysis.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
 from Sentiment_Analysis.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
                                                                       write_sentiment_examples)
@@ -17,19 +17,20 @@ from Sentiment_Analysis.src.data_utils.rotten_tomatoes_reader import (read_and_i
 
 def _parse_args():
     parser = argparse.ArgumentParser(description='trainer.py')
-    parser.add_argument('--model', type=str, default='FF', help='model to run (FF or FANCY)')
+    parser.add_argument('--model', type=str, default=sentiment_conf.model,
+                        help='model to run (FF or FANCY)')
     parser.add_argument('--word_vecs_path', type=str, default=common_conf.glove,
                         help='path to word vectors file')
-    parser.add_argument('--train_path', type=str, default=conf.data_path + 'train.txt',
+    parser.add_argument('--train_path', type=str, default=sentiment_conf.data_path + 'train.txt',
                         help='path to train set (you should not need to modify)')
-    parser.add_argument('--dev_path', type=str, default=conf.data_path + 'dev.txt',
+    parser.add_argument('--dev_path', type=str, default=sentiment_conf.data_path + 'dev.txt',
                         help='path to dev set (you should not need to modify)')
-    parser.add_argument('--blind_test_path', type=str, default=conf.data_path + 'test-blind.txt',
+    parser.add_argument('--blind_test_path', type=str, default=sentiment_conf.data_path + 'test-blind.txt',
                         help='path to blind test set')
-    parser.add_argument('--test_output_path', type=str, default=conf.output_path,
+    parser.add_argument('--test_output_path', type=str, default=sentiment_conf.output_path,
                         help='output path for test predictions')
-    parser.add_argument('--no_run_on_test', dest='run_on_test', default=conf.run_on_test_flag, action='store_false',
-                        help='skip printing output on the test set')
+    parser.add_argument('--no_run_on_test', dest='run_on_test', default=sentiment_conf.run_on_test_flag,
+                        action='store_false', help='skip printing output on the test set')
     args = parser.parse_args()
     return args
 
@@ -69,6 +70,7 @@ if __name__ == '__main__':
         model = train_sentiment_ffnn(train_data=train_data,
                                      dev_data=dev_data,
                                      word_embed=word_embedding)
+        print('TODO: Write evaluation')
     else:
         raise NotImplementedError
 

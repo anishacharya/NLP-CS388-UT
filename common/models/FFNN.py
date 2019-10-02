@@ -8,8 +8,8 @@ class FFNN(nn.Module):
         self.g = nn.Tanh()
         self.W = nn.Linear(hid, out)
         self.softmax = nn.Softmax(dim=0)
-        nn.init.xavier_uniform(self.V.weight)
-        nn.init.xavier_uniform(self.W.weight)
+        nn.init.xavier_uniform_(self.V.weight)
+        nn.init.xavier_uniform_(self.W.weight)
 
     def forward(self, x):
         return self.softmax(self.W(self.g(self.V(x))))

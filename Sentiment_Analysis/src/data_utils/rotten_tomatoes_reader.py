@@ -32,6 +32,7 @@ def read_and_index_sentiment_examples(infile: str,
             # But won't work for other data-sets which is not binary
             label = 0 if "0" in fields[0] else 1
             sent = fields[1]
+
             tokenized_cleaned_sent = list(filter(lambda x: x != '', text_cleaner.text_cleaning(sent)))
 
             if word_counter is not None:

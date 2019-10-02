@@ -3,6 +3,9 @@ from nltk.corpus import stopwords
 from string import punctuation
 import torch
 import numpy as np
+from typing import List
+import random
+
 """
 Author: Anish Acharya <anishacharya@utexas.edu>
 Adopted From: Greg Durret <gdurrett@cs.utexas.edu>
@@ -22,21 +25,23 @@ class TextCleaning:
         # *** Remove this if you are using capitalization as feature ex. NER **
         text = text.lower()
 
-        text = re.sub(r"[^A-Za-z0-9(),.!?\'\`\-]", " ", text)
+        text = re.sub(r"\. \. \.", "\.", text)
+        text = re.sub(r"[^A-Za-z0-9(),!?\'\`\.]", " ", text)
+        text = re.sub(r'[0-9]+', '', text)
         text = re.sub(r"\'s", " \'s", text)
         text = re.sub(r"\'ve", " \'ve", text)
         text = re.sub(r"n\'t", " n\'t", text)
         text = re.sub(r"\'re", " \'re", text)
         text = re.sub(r"\'d", " \'d", text)
         text = re.sub(r"\'ll", " \'ll", text)
-        text = re.sub(r",", " , ", text)
-        text = re.sub(r"!", " ! ", text)
-        text = re.sub(r"\(", " ( ", text)
-        text = re.sub(r"\)", " ) ", text)
-        text = re.sub(r"\?", " ? ", text)
-        text = re.sub(r"\-", " - ", text)
+        text = re.sub(r",", "", text)
+        text = re.sub(r"!", "", text)
+        text = re.sub(r"\(", "", text)
+        text = re.sub(r"\)", "", text)
+        text = re.sub(r"\?", "", text)
         text = re.sub(r"\s{2,}", " ", text)
-
+        text = re.sub(r"<br />", " ", text)
+        text = re.sub(r'[^\w\s]', '', text)
         text = text.split(" ")
         text = [w for w in text if w not in self.stops]
         return text
@@ -87,5 +92,23 @@ def pad_to_length(np_arr, length):
     result = np.zeros(length)
     result[0:np_arr.shape[0]] = np_arr
     return result
+
+
+def get_batch(data: List, batch_size: int, start_ix: int) -> List:
+    """ given a start ix and batch size this will return truncated data(list) as batch """
+    if len(data) == 0: return []
+    return data[start_ix:] if len(data[start_ix:]) <= batch_size else data[start_ix: start_ix + batch_size]
+
+
+def word_dropout(dropout_prob: float) -> bool:
+    """ Toss a biased coin and return bool if to drop this token"""
+    if random.random() < dropout_prob:
+        return True
+    return False
+
+
+def get_onehot_np(y: np.array, no_classes: int):
+    return np.eye(no_classes)[y]
+
 
 
