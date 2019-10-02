@@ -74,15 +74,19 @@ class SentenceEmbedding:
         """
 
         embedding_accumulator = [0] * self.embed_dim
-        word_count = 0
+        word_count = len(sentence)
         for ix in sentence:
-            if word_drop and word_dropout(dropout_rate): continue
+            if word_drop and word_dropout(dropout_rate):
+                word_count -= 1
+                continue
             if ix not in self.ix2embed.keys():
                 print('word {} not in embed vocab and not mapped to __UNK__ '
                       'check indexing method'.format(self.word2ix.ints_to_objs[ix]))
                 ix = self.word2ix.objs_to_ints[common_conf.UNK_TOKEN]
             embedding_accumulator = [sum(x) for x in zip(embedding_accumulator, self.ix2embed[ix])]
-            word_count += 1
+        if word_count == 0:
+            print('No word Embedding for any word in the sentence {} - please check'.format(sentence))
+            return self.ix2embed[self.word2ix.objs_to_ints[common_conf.UNK_TOKEN]]
         sentence_embedding = [i / word_count for i in embedding_accumulator]
         return sentence_embedding
 
