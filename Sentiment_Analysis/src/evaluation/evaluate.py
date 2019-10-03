@@ -20,4 +20,5 @@ def evaluate_sentiment(model, data: [SentimentExample], word_embedding:WordEmbed
         y_pred[ix] = argmax_from_onehot(prob)
 
     metrics = ClassificationEval(ground_truth=y_ground, prediction=y_pred)
-    return metrics
+
+    return y_pred, metrics

@@ -80,12 +80,12 @@ class SentenceEmbedding:
                 word_count -= 1
                 continue
             if ix not in self.ix2embed.keys():
-                #print('word {} not in embed vocab and not mapped to __UNK__ '
-                #      'check indexing method'.format(self.word2ix.ints_to_objs[ix]))
                 ix = self.word2ix.objs_to_ints[common_conf.UNK_TOKEN]
             embedding_accumulator = [sum(x) for x in zip(embedding_accumulator, self.ix2embed[ix])]
         if word_count == 0:
-            print('No word Embedding for any word in the sentence {} - please check'.format(sentence))
+            sent_string = ''
+            for ix in sentence: sent_string += self.word2ix.ints_to_objs[ix]
+            print('No word Embedding for any word in the sentence |{}| - please check'.format(sent_string))
             return self.ix2embed[self.word2ix.objs_to_ints[common_conf.UNK_TOKEN]]
         sentence_embedding = [i / word_count for i in embedding_accumulator]
         return sentence_embedding

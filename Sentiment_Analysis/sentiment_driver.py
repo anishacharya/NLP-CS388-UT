@@ -13,6 +13,8 @@ import Sentiment_Analysis.sentiment_config as sentiment_conf
 from Sentiment_Analysis.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
 from Sentiment_Analysis.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
                                                                       write_sentiment_examples)
+from Sentiment_Analysis.src.evaluation.evaluate import evaluate_sentiment
+from Sentiment_Analysis.src.data_utils.definitions import SentimentExample
 
 
 def _parse_args():
@@ -73,7 +75,11 @@ if __name__ == '__main__':
     else:
         raise NotImplementedError
 
-    #if args.run_on_test is True:
-
+    if args.run_on_test is True:
+        y_pred, _ = evaluate_sentiment(model=model, model_type=args.model,
+                                       word_embedding=word_embedding, data=test_data)
+        test_predicted = []
+        for pred, data_point in zip(y_pred, test_data):
+            test_predicted.append(SentimentExample(label=pred, indexed_words=data_point.indexed_words))
         # Write the test set output
-        #write_sentiment_examples(test_predicted, args.test_output_path, word_vectors.word_indexer)
+        write_sentiment_examples(test_predicted, args.test_output_path, word_embedding.word_ix)
