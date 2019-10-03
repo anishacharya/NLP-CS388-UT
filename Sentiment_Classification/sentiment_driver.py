@@ -2,19 +2,21 @@ import os
 import sys
 import argparse
 from collections import Counter
+import torch
 
 sys.path.append(os.path.dirname(__file__) + '../.')
 
 import common.common_config as common_conf
 from common.utils.indexer import Indexer
 from common.utils.embedding import WordEmbedding
+from common.models.FFNN import FFNN
 
-import Sentiment_Analysis.sentiment_config as sentiment_conf
-from Sentiment_Analysis.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
-from Sentiment_Analysis.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
-                                                                      write_sentiment_examples)
-from Sentiment_Analysis.src.evaluation.evaluate import evaluate_sentiment
-from Sentiment_Analysis.src.data_utils.definitions import SentimentExample
+import Sentiment_Classification.sentiment_config as sentiment_conf
+from Sentiment_Classification.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
+from Sentiment_Classification.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
+                                                                            write_sentiment_examples)
+from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment
+from Sentiment_Classification.src.data_utils.definitions import SentimentExample
 
 
 def _parse_args():
@@ -61,6 +63,7 @@ if __name__ == '__main__':
                                                   word_indexer=word_indexer,
                                                   add_to_indexer=False,
                                                   word_counter=None)
+    # train_data = train_data[0:5]
     print(repr(len(train_data)) + " / " + repr(len(dev_data)) + " / " + repr(len(test_data))
           + " train/dev/test examples")
 
@@ -69,9 +72,16 @@ if __name__ == '__main__':
                                    word_indexer=word_indexer)
 
     if args.model == 'FFNN':
-        model = train_sentiment_ffnn(train_data=train_data,
-                                     dev_data=dev_data,
-                                     word_embed=word_embedding)
+        train_sentiment_ffnn(train_data=train_data,
+                             dev_data=dev_data,
+                             word_embed=word_embedding)
+        # load model
+        model = FFNN(sentiment_conf)
+        model.load_state_dict(torch.load(sentiment_conf.model_path))
+        _, metrics = evaluate_sentiment(model=model, data=dev_data,
+                                        word_embedding=word_embedding, model_type='FFNN')
+        print("Final Dev Accuracy = ", metrics.accuracy)
+
     else:
         raise NotImplementedError
 
@@ -80,6 +90,6 @@ if __name__ == '__main__':
                                        word_embedding=word_embedding, data=test_data)
         test_predicted = []
         for pred, data_point in zip(y_pred, test_data):
-            test_predicted.append(SentimentExample(label=pred, indexed_words=data_point.indexed_words))
+            test_predicted.append(SentimentExample(label=int(pred), indexed_words=data_point.indexed_words))
         # Write the test set output
         write_sentiment_examples(test_predicted, args.test_output_path, word_embedding.word_ix)

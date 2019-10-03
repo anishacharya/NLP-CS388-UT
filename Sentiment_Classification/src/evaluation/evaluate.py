@@ -1,7 +1,7 @@
 from common.evaluation.evaluate_classifier import ClassificationEval
 from common.utils.embedding import WordEmbedding
-from Sentiment_Analysis.src.data_utils.definitions import SentimentExample
-from Sentiment_Analysis.src.utils import get_xy_FFNN
+from Sentiment_Classification.src.data_utils.definitions import SentimentExample
+from Sentiment_Classification.src.utils import get_xy_FFNN
 from common.utils.utils import argmax_from_onehot
 import numpy as np
 
@@ -15,10 +15,10 @@ def evaluate_sentiment(model, data: [SentimentExample], word_embedding:WordEmbed
     y_ground = np.zeros(len(data))
     y_pred = np.zeros(len(data))
     for ix, ex in enumerate(data):
-        y_ground[ix] = int(ex.label)
+        y_ground[ix] = ex.label
     for ix, prob in enumerate(pred_prob):
         y_pred[ix] = argmax_from_onehot(prob)
 
-    metrics = ClassificationEval(ground_truth=y_ground, prediction=y_pred)
+    metrics = ClassificationEval(ground_truth=y_ground.astype(int), prediction=y_pred.astype(int))
 
     return y_pred, metrics

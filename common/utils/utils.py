@@ -76,7 +76,6 @@ def flatten(lst):
 
 
 def argmax_from_onehot(vec):
-    # return the argmax as a python int
     _, idx = torch.max(vec, 0)
     return idx
 

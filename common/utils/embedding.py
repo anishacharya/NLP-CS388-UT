@@ -84,7 +84,7 @@ class SentenceEmbedding:
             embedding_accumulator = [sum(x) for x in zip(embedding_accumulator, self.ix2embed[ix])]
         if word_count == 0:
             sent_string = ''
-            for ix in sentence: sent_string += self.word2ix.ints_to_objs[ix]
+            for ix in sentence: sent_string += self.word2ix.ints_to_objs[ix] + ' '
             print('No word Embedding for any word in the sentence |{}| - please check'.format(sent_string))
             return self.ix2embed[self.word2ix.objs_to_ints[common_conf.UNK_TOKEN]]
         sentence_embedding = [i / word_count for i in embedding_accumulator]

@@ -1,27 +1,25 @@
-from Sentiment_Analysis.src.data_utils.definitions import SentimentExample
-from Sentiment_Analysis.src.utils import get_xy_FFNN
-import Sentiment_Analysis.sentiment_config as sentiment_conf
-from Sentiment_Analysis.src.evaluation.evaluate import evaluate_sentiment
+from Sentiment_Classification.src.data_utils.definitions import SentimentExample
+from Sentiment_Classification.src.utils import get_xy_FFNN
+import Sentiment_Classification.sentiment_config as sentiment_conf
+from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment
 
-from common.utils.embedding import WordEmbedding, SentenceEmbedding
+from common.utils.embedding import WordEmbedding
 from common.utils.utils import get_batch
 from common.models.FFNN import FFNN
 
 from typing import List
 from random import shuffle
 
+import torch
 import torch.optim as optim
 import torch.nn as nn
 
 
 def train_sentiment_ffnn(train_data: List[SentimentExample],
                          dev_data: List[SentimentExample],
-                         word_embed: WordEmbedding) -> FFNN:
-
-    # define training components
-    model = FFNN(300, 150, 2)
-    best_model = model
-    acc = 0
+                         word_embed: WordEmbedding):
+    model = FFNN(sentiment_conf)
+    acc = 0.0
     lr = sentiment_conf.initial_lr
     optimizer = optim.Adam(model.parameters(), lr=lr)
     epochs = sentiment_conf.ffnn_epochs
@@ -29,7 +27,6 @@ def train_sentiment_ffnn(train_data: List[SentimentExample],
     loss_function = nn.BCELoss()
 
     for epoch in range(0, epochs):
-        # shuffle data
         shuffle(train_data)
         total_loss = 0.0
         for start_ix in range(0, len(train_data), batch_size):
@@ -44,16 +41,9 @@ def train_sentiment_ffnn(train_data: List[SentimentExample],
         print("Loss on epoch %i: %f" % (epoch, total_loss))
         _, metrics = evaluate_sentiment(model=model, data=dev_data,
                                         word_embedding=word_embed, model_type='FFNN')
-        # to make sure no deep/shallow copy issue:
-        _, metrics_best = evaluate_sentiment(model=best_model, data=dev_data,
-                                             word_embedding=word_embed, model_type='FFNN')
         print(" ========  Performance after epoch {} is ====== ".format(epoch))
         print("New Accuracy = ", metrics.accuracy)
-        print("Current Best Model Acc: ", metrics_best.accuracy)
         if metrics.accuracy > acc:
-            best_model = model
-
-
-
-
-    return best_model
+            acc = metrics.accuracy
+            print("==== saving model ====")
+            torch.save(model.state_dict(), sentiment_conf.model_path)

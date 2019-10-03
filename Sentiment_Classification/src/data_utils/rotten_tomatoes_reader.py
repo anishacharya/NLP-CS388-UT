@@ -1,4 +1,4 @@
-from Sentiment_Analysis.src.data_utils.definitions import SentimentExample
+from Sentiment_Classification.src.data_utils.definitions import SentimentExample
 from common.utils.utils import TextCleaning
 from common.utils.indexer import Indexer
 import common.common_config as common_conf
