@@ -70,11 +70,10 @@ if __name__ == '__main__':
         model = train_sentiment_ffnn(train_data=train_data,
                                      dev_data=dev_data,
                                      word_embed=word_embedding)
-        print('TODO: Write evaluation')
     else:
         raise NotImplementedError
 
-    if args.run_on_test is True:
-        raise NotImplementedError
+    #if args.run_on_test is True:
+
         # Write the test set output
-        # write_sentiment_examples(test_predicted, args.test_output_path, word_vectors.word_indexer)
+        #write_sentiment_examples(test_predicted, args.test_output_path, word_vectors.word_indexer)

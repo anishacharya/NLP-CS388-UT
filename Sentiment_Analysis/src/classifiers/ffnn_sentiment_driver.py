@@ -1,16 +1,14 @@
 from Sentiment_Analysis.src.data_utils.definitions import SentimentExample
-from Sentiment_Analysis.src.utils import get_xy
+from Sentiment_Analysis.src.utils import get_xy_FFNN
 import Sentiment_Analysis.sentiment_config as sentiment_conf
+from Sentiment_Analysis.src.evaluation.evaluate import evaluate_sentiment
 
 from common.utils.embedding import WordEmbedding, SentenceEmbedding
-import common.common_config as common_conf
 from common.utils.utils import get_batch
 from common.models.FFNN import FFNN
 
 from typing import List
-import numpy as np
 from random import shuffle
-import torch
 
 import torch.optim as optim
 import torch.nn as nn
@@ -33,15 +31,20 @@ def train_sentiment_ffnn(train_data: List[SentimentExample],
         shuffle(train_data)
         total_loss = 0.0
         for start_ix in range(0, len(train_data), batch_size):
+            print('start_ix ={}'.format(start_ix))
             train_batch = get_batch(data=train_data, start_ix=start_ix, batch_size=batch_size)
-            x_batch, y_batch = get_xy(data=train_batch, word_embed=word_embed)
+            x_batch, y_batch = get_xy_FFNN(data=train_batch, word_embed=word_embed)
             model.zero_grad()
-            probs = model.forward(x_batch)
-            # Can also use built-in NLLLoss as a shortcut here (takes log probabilities) but we're being explicit here
-            # loss = torch.neg(torch.log(probs)).dot(y_batch)
+            probs = model(x_batch)
             loss = loss_function(probs, y_batch)
-            total_loss += loss
+            total_loss += loss / batch_size
             loss.backward()
             optimizer.step()
         print("Loss on epoch %i: %f" % (epoch, total_loss))
+        metrics = evaluate_sentiment(model=model, data=dev_data, word_embedding=word_embed, model_type='FFNN')
+        print(" ========  Performance after epoch {} is ====== ".format(epoch))
+        print("Accuracy = ", metrics.accuracy)
+        print("Precision = ", metrics.precision)
+        print("Recall = ", metrics.recall)
+        print("F1 =", metrics.f1_score)
     return model

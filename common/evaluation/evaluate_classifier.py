@@ -1,8 +1,9 @@
 import sklearn.metrics as metrics
+import numpy as np
 
 
 class ClassificationEval:
-    def __init__(self, ground_truth, prediction):
+    def __init__(self, ground_truth: np.array, prediction: np.array):
         self.ground_truth = ground_truth
         self.prediction = prediction
 

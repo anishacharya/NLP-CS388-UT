@@ -43,7 +43,7 @@ class TextCleaning:
         text = re.sub(r"<br />", " ", text)
         text = re.sub(r'[^\w\s]', '', text)
         text = text.split(" ")
-        text = [w for w in text if w not in self.stops]
+        # text = [w for w in text if w not in self.stops]
         return text
 
 
@@ -75,10 +75,10 @@ def flatten(lst):
             for sub_elem in elem]
 
 
-def argmax(vec):
+def argmax_from_onehot(vec):
     # return the argmax as a python int
-    _, idx = torch.max(vec, 1)
-    return idx.item()
+    _, idx = torch.max(vec, 0)
+    return idx
 
 
 def pad_to_length(np_arr, length):

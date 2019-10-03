@@ -8,7 +8,7 @@ import numpy as np
 import torch
 
 
-def get_xy(data: List[SentimentExample], word_embed: WordEmbedding):
+def get_xy_FFNN(data: List[SentimentExample], word_embed: WordEmbedding):
     """ From input batch extracts and return sentences and labels batch"""
     # we will convert each sentence into its sentence embedding using DAN
     # we will also get labels
