@@ -18,7 +18,8 @@ def get_xy_FFNN(data: List[SentimentExample], word_embed: WordEmbedding):
 
     for ix, data_point in enumerate(data):
         sentence = data_point.indexed_words
-        sentence_embedding = sentence_embed.average_word_embedding(sentence=sentence)
+        sentence_embedding = sentence_embed.average_word_embedding(sentence=sentence,
+                                                                   word_dropout_rate=sentiment_config.word_dropout_rate)
         x[ix, :] = sentence_embedding
         y[:, ix] = data_point.label
 

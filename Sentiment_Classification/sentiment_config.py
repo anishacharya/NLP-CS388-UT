@@ -16,7 +16,7 @@ optimizer = 'adam'  # adagrad
 initial_lr = 0.001
 weight_decay = 1e-4
 
-word_dropout_rate = 0.2
+word_dropout_rate = 0.3
 
 # network config
 input_dim = 300

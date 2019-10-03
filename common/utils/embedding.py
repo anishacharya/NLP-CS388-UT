@@ -57,7 +57,7 @@ class SentenceEmbedding:
         self.word2ix = word_embed.word_ix
         self.embed_dim = word_embed.emb_dim
 
-    def average_word_embedding(self, sentence: List[int], word_drop='False', dropout_rate=0.1) -> List:
+    def average_word_embedding(self, sentence: List[int], word_dropout_rate=0) -> List:
 
         """
         Implements Deep Averaging Network.
@@ -69,14 +69,14 @@ class SentenceEmbedding:
         :param sentence: indexed sentence i.e. [1,4,7,8]
         where indexes are corresponding indexes of the tokens in the indexer
         :param word_drop: if True then implements random dropout as described in DAN paper
-        :param dropout_rate: prob with which we drop a word
+        :param word_dropout_rate: prob with which we drop a word
         :return: sentence embedding vector taken as the average of the words as described in the DAN paper
         """
 
         embedding_accumulator = [0] * self.embed_dim
         word_count = len(sentence)
         for ix in sentence:
-            if word_drop and word_dropout(dropout_rate):
+            if word_dropout(word_dropout_rate):
                 word_count -= 1
                 continue
             if ix not in self.ix2embed.keys():
