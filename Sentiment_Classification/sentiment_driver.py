@@ -63,7 +63,6 @@ if __name__ == '__main__':
                                                   word_indexer=word_indexer,
                                                   add_to_indexer=False,
                                                   word_counter=None)
-    train_data = train_data[0:5]
     print(repr(len(train_data)) + " / " + repr(len(dev_data)) + " / " + repr(len(test_data))
           + " train/dev/test examples")
 

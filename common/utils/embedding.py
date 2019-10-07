@@ -1,5 +1,7 @@
 import common.common_config as common_conf
 from typing import Dict, List
+import time
+import numpy as np
 
 from common.utils.indexer import Indexer
 from common.utils.utils import word_dropout
@@ -10,40 +12,40 @@ class WordEmbedding:
         self.embedding_file = pre_trained_embedding_filename
         self.word_ix = word_indexer
         self.emb_dim = 0
-        self.ix2embed = self.load_word_embedding
+        self.ix2embed = self.load_and_index_word_embedding()
 
-    @property
-    def load_word_embedding(self) -> Dict:
+    def load_and_index_word_embedding(self) -> Dict:
         """
         Read a GloVe txt file.we return dictionary
         TODO: Extend for other embeddings [FastText]
         mapping index to embedding vector( index_to_embedding),
         relativize to train_data i.e. for words in the word indexer
         """
+        print(" Loading Glove and Relativizing to Train Data ")
+        t = time.time()
         index_to_embedding = {}
-        embedding_dict = {}
 
-        # with open(self.embedding_file, 'r') as glove_file:
         glove_file = open(self.embedding_file, 'r')
         for line in glove_file:
             split = line.split(' ')
             word = split[0]
             representation = split[1:]
-            embedding_dict[word] = representation
+            representation = np.array([float(val) for val in representation])
+            if self.word_ix.contains(word):
+                ix = self.word_ix.add_and_get_index(word)
+                index_to_embedding[ix] = representation
         glove_file.close()
 
-        # get embedding dim
-        self.emb_dim = len(representation)
         # create empty representation for unknown words.
-        unk = self.word_ix.add_and_get_index(common_conf.UNK_TOKEN)
-        embedding_dict[unk] = [0.0] * self.emb_dim
+        self.emb_dim = len(representation)
+        _UNK_ix = self.word_ix.objs_to_ints[common_conf.UNK_TOKEN]
+        index_to_embedding[_UNK_ix] = [0.0] * self.emb_dim
 
-        for (word, word_ix) in self.word_ix.objs_to_ints.items():
-            if embedding_dict[word]:
-                index_to_embedding[word_ix] = embedding_dict[word]
-            else:
-                index_to_embedding[word_ix] = embedding_dict[unk]
-
+        for word_ix in self.word_ix.ints_to_objs.keys():
+            if word_ix not in index_to_embedding:
+                print('No Glove Representation for: {}: Setting to _UNK_ '.format(self.word_ix.ints_to_objs[word_ix]))
+                index_to_embedding[word_ix] = index_to_embedding[_UNK_ix]
+        print("Time Taken for embedding dict creation: {}".format(time.time()-t))
         return index_to_embedding
 
     def get_word_embedding(self, word) -> List:
@@ -92,9 +94,10 @@ class SentenceEmbedding:
                 # we don't want to drop words if the sentence is too short
                 word_count -= 1
                 continue    # skip this word
-            if ix not in self.ix2embed.keys():
-                ix = self.word2ix.objs_to_ints[common_conf.UNK_TOKEN]
-                print('word embedding not found for |{}|'.format(self.word2ix.ints_to_objs[ix]))
+            if ix not in self.ix2embed:
+                # ix = self.word2ix.objs_to_ints[common_conf.UNK_TOKEN]
+                # print('word embedding not found for |{}|'.format(self.word2ix.ints_to_objs[ix]))
+                raise SystemExit("Should Not be here - Debug Embedding Loader Code")
             embedding_accumulator = [sum(x) for x in zip(embedding_accumulator, self.ix2embed[ix])]
 
         # if word_count == 0:

@@ -10,7 +10,7 @@ model_path = './model'
 
 """ FFNN config """
 #  training config
-ffnn_epochs = 15
+ffnn_epochs = 5
 batch_size = 64
 lr_schedule = 'None'  # None / CLR / CALR
 optimizer = 'adam'  # adagrad
