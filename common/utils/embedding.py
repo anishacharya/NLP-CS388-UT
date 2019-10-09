@@ -44,10 +44,12 @@ class WordEmbedding:
         index_to_embedding[_UNK_ix] = [0.0] * self.emb_dim
         index_to_embedding[_PAD_ix] = [0.0] * self.emb_dim
 
+        # For words in vocab that is not in glove initialize random normal
         for word_ix in self.word_ix.ints_to_objs.keys():
             if word_ix not in index_to_embedding:
-                print('No Glove Representation for: {}: Setting to _UNK_ '.format(self.word_ix.ints_to_objs[word_ix]))
-                index_to_embedding[word_ix] = index_to_embedding[_UNK_ix]
+                print('No Glove Representation for: {}: Setting to random'.format(self.word_ix.ints_to_objs[word_ix]))
+                index_to_embedding[word_ix] = np.random.normal(scale=0.6, size=(self.emb_dim, ))
+                # index_to_embedding[_UNK_ix]
         print("Time Taken for embedding dict creation: {}".format(time.time()-t))
         return index_to_embedding
 

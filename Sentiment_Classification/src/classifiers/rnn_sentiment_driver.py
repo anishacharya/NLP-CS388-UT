@@ -19,19 +19,14 @@ from sklearn.utils import shuffle
 def train_sentiment_rnn(train_data: List[SentimentExample],
                         dev_data: List[SentimentExample],
                         word_embed: WordEmbedding):
-    rec_unit = sentiment_conf.rec_unit
-    vocab_size = len(word_embed.word_ix)
-    model = RNN(conf=sentiment_conf,
-                vocab_size=vocab_size,
-                emb_dim=word_embed.emb_dim,
-                weights_init=word_embed.ix2embed,)
 
+    model = RNN(conf=sentiment_conf, word_embed=word_embed)
     acc = 0.0
     lr = sentiment_conf.initial_lr
 
     epochs = sentiment_conf.epochs
     batch_size = sentiment_conf.batch_size
-#    optimizer = optim.Adam(model.parameters(), lr=lr)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
     loss_function = nn.BCELoss()
 
     x_padded, y_padded = get_xy_padded(data=train_data, word_embed=word_embed)

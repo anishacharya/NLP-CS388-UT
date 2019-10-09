@@ -114,4 +114,8 @@ def get_onehot_np(y: np.array, no_classes: int):
     return y_onehot_np
 
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
 

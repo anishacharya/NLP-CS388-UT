@@ -31,13 +31,20 @@ elif model == 'RNN':
     #  training config
     no_classes = 2
     rec_unit = 'LSTM'  # GRU
+
     epochs = 5
     batch_size = 32
     lr_schedule = 'None'  # None / CLR / CALR
     optimizer = 'adam'  # adagrad
     initial_lr = 0.001
     weight_decay = 1e-4
-    hidden_lstm = 50
+    dropout = 0.2
+
+    # Stacked RNN units
+    no_of_rec_units = 1
+    # inside RNN unit
+    hidden_size = 50
+    rnn_dropout = 0.2
 
 """ ElMo Config """
 
