@@ -32,6 +32,12 @@ def get_xy_embedded(data: List[SentimentExample], word_embed: WordEmbedding):
     return x, y_onehot
 
 
+def get_xy(data: List[SentimentExample]):
+    x = [torch.tensor(data=data_point.indexed_words, dtype=torch.int32) for data_point in data]
+    y = [torch.tensor(data=data_point.label, dtype=torch.int32) for data_point in data]
+    return x, y
+
+
 def get_xy_padded(data: List[SentimentExample], word_embed: WordEmbedding):
     seq_len = sentiment_config.seq_max_len
     pad_ix = word_embed.word_ix.add_and_get_index(common_conf.PAD_TOKEN)
@@ -47,4 +53,5 @@ def get_xy_padded(data: List[SentimentExample], word_embed: WordEmbedding):
 
     y_onehot_np = get_onehot_np(y=y, no_classes=sentiment_config.no_classes)
     y_onehot = torch.from_numpy(y_onehot_np)
-    return x, y_onehot
+
+    return x.to(dtype=torch.long), y_onehot.to(dtype=torch.float)

@@ -10,6 +10,7 @@ import common.common_config as common_conf
 from common.utils.indexer import Indexer
 from common.utils.embedding import WordEmbedding
 from common.models.FFNN import FFNN
+from common.models.RNN import RNN
 
 import Sentiment_Classification.sentiment_config as sentiment_conf
 from Sentiment_Classification.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
@@ -65,7 +66,7 @@ if __name__ == '__main__':
     print(repr(len(train_data)) + " / " + repr(len(dev_data)) + " / " + repr(len(test_data))
           + " train/dev/test examples")
 
-    train_data = train_data[0:10]
+    # train_data = train_data[0:10]
     # Load Embeddings and create ix2embedding mapping -> Look inside the WordEmbedding class
     word_embedding = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
                                    word_indexer=word_indexer)
@@ -74,18 +75,19 @@ if __name__ == '__main__':
         train_sentiment_ffnn(train_data=train_data,
                              dev_data=dev_data,
                              word_embed=word_embedding)
-        # load model
         model = FFNN(sentiment_conf)
         model.load_state_dict(torch.load(sentiment_conf.model_path))
-        _, metrics = evaluate_sentiment(model=model, data=dev_data,
-                                        word_embedding=word_embedding, model_type='FFNN')
-        print("Final Dev Accuracy = ", metrics.accuracy)
-
     elif args.model == 'RNN':
         train_sentiment_rnn(train_data=train_data,
                             dev_data=dev_data,
                             word_embed=word_embedding)
+        model = RNN(conf=sentiment_conf, word_embed=word_embedding)
+        model.load_state_dict(torch.load(sentiment_conf.model_path))
+    else:
         raise NotImplementedError
+    _, metrics = evaluate_sentiment(model=model, data=dev_data,
+                                    word_embedding=word_embedding, model_type=args.model)
+    print("Final Dev Accuracy = ", metrics.accuracy)
 
     if args.run_on_test is True:
         y_pred, _ = evaluate_sentiment(model=model, model_type=args.model,

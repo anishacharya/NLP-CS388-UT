@@ -33,7 +33,7 @@ elif model == 'RNN':
     rec_unit = 'LSTM'  # GRU
 
     epochs = 5
-    batch_size = 32
+    batch_size = 64
     lr_schedule = 'None'  # None / CLR / CALR
     optimizer = 'adam'  # adagrad
     initial_lr = 0.001
@@ -41,10 +41,10 @@ elif model == 'RNN':
     dropout = 0.2
 
     # Stacked RNN units
-    no_of_rec_units = 1
+    no_of_rec_units = 2
     # inside RNN unit
-    hidden_size = 50
-    rnn_dropout = 0.2
+    hidden_size = 100
+    rnn_dropout = 0.1
 
 """ ElMo Config """
 

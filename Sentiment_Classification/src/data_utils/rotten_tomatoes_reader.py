@@ -23,6 +23,8 @@ def read_and_index_sentiment_examples(infile: str,
     # initialize a Text Cleaner
     text_cleaner = TextCleaning()
     sentiment_data = []
+    word_indexer.add_and_get_index(common_conf.UNK_TOKEN)
+    word_indexer.add_and_get_index(common_conf.PAD_TOKEN)
 
     for line in f:
         if len(line.strip()) > 0:
