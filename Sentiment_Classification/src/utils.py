@@ -36,12 +36,12 @@ def get_xy_padded(data: List[SentimentExample], word_embed: WordEmbedding):
     seq_len = sentiment_config.seq_max_len
     pad_ix = word_embed.word_ix.add_and_get_index(common_conf.PAD_TOKEN)
 
-    x = np.ones((len(data), seq_len), dtype=np.float32)
+    x = np.ones((len(data), seq_len), dtype=np.int32)
     y = np.zeros((1, len(data)), dtype=np.int32)  # np.eye won't work for float which we use to get one hot
 
     for ix, data_point in enumerate(data):
         sentence = data_point.indexed_words
-        x[ix, :] = pad_to_length(np_arr=sentence, pad_ix=pad_ix)
+        x[ix, :] = pad_to_length(sentence=sentence, length=seq_len, pad_ix=pad_ix)
         y[:, ix] = data_point.label
     x = torch.from_numpy(x)
 

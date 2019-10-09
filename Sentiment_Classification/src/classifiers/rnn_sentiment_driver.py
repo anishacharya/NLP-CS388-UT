@@ -31,14 +31,14 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
 
     epochs = sentiment_conf.epochs
     batch_size = sentiment_conf.batch_size
-    optimizer = optim.Adam(model.parameters(), lr=lr)
+#    optimizer = optim.Adam(model.parameters(), lr=lr)
     loss_function = nn.BCELoss()
 
     x_padded, y_padded = get_xy_padded(data=train_data, word_embed=word_embed)
 
     for epoch in range(0, epochs):
         # shuffle(train_data)
-        shuffle(x_padded, y_padded)
+        # shuffle(x_padded, y_padded)
         total_loss = 0.0
 
         for start_ix in range(0, len(train_data), batch_size):

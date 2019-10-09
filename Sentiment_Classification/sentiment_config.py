@@ -9,8 +9,8 @@ model_path = './model'
 
 
 if model == 'FFNN':
-    " FFNN config "
     #  training config
+    no_classes = 2
     epochs = 5
     batch_size = 64
     lr_schedule = 'None'  # None / CLR / CALR
@@ -24,10 +24,12 @@ if model == 'FFNN':
     hidden_1 = 150
     hidden_2 = 75
     hidden_3 = 50
-    no_classes = 2
+
     dropout = 0.2
 
 elif model == 'RNN':
+    #  training config
+    no_classes = 2
     rec_unit = 'LSTM'  # GRU
     epochs = 5
     batch_size = 32
