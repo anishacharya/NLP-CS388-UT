@@ -38,8 +38,11 @@ class WordEmbedding:
 
         # create empty representation for unknown words.
         self.emb_dim = len(representation)
-        _UNK_ix = self.word_ix.objs_to_ints[common_conf.UNK_TOKEN]
+        _UNK_ix = self.word_ix.add_and_get_index(common_conf.UNK_TOKEN)
+        _PAD_ix = self.word_ix.add_and_get_index(common_conf.PAD_TOKEN)
+
         index_to_embedding[_UNK_ix] = [0.0] * self.emb_dim
+        index_to_embedding[_PAD_ix] = [0.0] * self.emb_dim
 
         for word_ix in self.word_ix.ints_to_objs.keys():
             if word_ix not in index_to_embedding:

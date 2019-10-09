@@ -1,5 +1,5 @@
 from Sentiment_Classification.src.data_utils.definitions import SentimentExample
-from Sentiment_Classification.src.utils import get_xy_FFNN
+from Sentiment_Classification.src.utils import get_xy_embedded
 import Sentiment_Classification.sentiment_config as sentiment_conf
 from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment
 
@@ -22,7 +22,7 @@ def train_sentiment_ffnn(train_data: List[SentimentExample],
     acc = 0.0
     lr = sentiment_conf.initial_lr
     optimizer = optim.Adam(model.parameters(), lr=lr)
-    epochs = sentiment_conf.ffnn_epochs
+    epochs = sentiment_conf.epochs
     batch_size = sentiment_conf.batch_size
     loss_function = nn.BCELoss()
 
@@ -31,7 +31,7 @@ def train_sentiment_ffnn(train_data: List[SentimentExample],
         total_loss = 0.0
         for start_ix in range(0, len(train_data), batch_size):
             train_batch = get_batch(data=train_data, start_ix=start_ix, batch_size=batch_size)
-            x_batch, y_batch = get_xy_FFNN(data=train_batch, word_embed=word_embed)
+            x_batch, y_batch = get_xy_embedded(data=train_batch, word_embed=word_embed)
             model.zero_grad()
             probs = model(x_batch)
             loss = loss_function(probs, y_batch)

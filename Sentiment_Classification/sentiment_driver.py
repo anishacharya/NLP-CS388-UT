@@ -13,6 +13,7 @@ from common.models.FFNN import FFNN
 
 import Sentiment_Classification.sentiment_config as sentiment_conf
 from Sentiment_Classification.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
+from Sentiment_Classification.src.classifiers.rnn_sentiment_driver import train_sentiment_rnn
 from Sentiment_Classification.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
                                                                             write_sentiment_examples)
 from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment
@@ -46,8 +47,6 @@ if __name__ == '__main__':
     # initialize an indexer and word counter instance
     # we will update these while reading the data itself.
     word_indexer = Indexer()
-    word_indexer.add_and_get_index(common_conf.UNK_TOKEN)
-
     word_counter = Counter()
 
     # Load data
@@ -66,6 +65,7 @@ if __name__ == '__main__':
     print(repr(len(train_data)) + " / " + repr(len(dev_data)) + " / " + repr(len(test_data))
           + " train/dev/test examples")
 
+    train_data = train_data[0:10]
     # Load Embeddings and create ix2embedding mapping -> Look inside the WordEmbedding class
     word_embedding = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
                                    word_indexer=word_indexer)
@@ -81,7 +81,10 @@ if __name__ == '__main__':
                                         word_embedding=word_embedding, model_type='FFNN')
         print("Final Dev Accuracy = ", metrics.accuracy)
 
-    else:
+    elif args.model == 'RNN':
+        train_sentiment_rnn(train_data=train_data,
+                            dev_data=dev_data,
+                            word_embed=word_embedding)
         raise NotImplementedError
 
     if args.run_on_test is True:

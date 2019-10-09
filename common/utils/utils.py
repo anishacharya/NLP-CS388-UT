@@ -80,15 +80,16 @@ def argmax_from_onehot(vec):
     return idx
 
 
-def pad_to_length(np_arr, length):
+def pad_to_length(np_arr, length: int, pad_ix: int):
     """
     Forces np_arr to length by either truncation (if longer) or zero-padding (if shorter)
+    :param pad_ix:
     :param np_arr:
     :param length: Length to pad to
     :return: a new numpy array with the data from np_arr padded to be of length length. If length is less than the
     length of the base array, truncates instead.
     """
-    result = np.zeros(length)
+    result = np.ones(length) * pad_ix
     result[0:np_arr.shape[0]] = np_arr
     return result
 
