@@ -82,9 +82,11 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
             write_sentiment_examples(test_predicted, sentiment_conf.output_path, word_embed.word_ix)
             print('Done Writing Test Output')
             lr = lr/2
-        elif (accuracy - last_epoch_acc) < - 0.01:
-            lr = sentiment_conf.initial_lr/2
-        else:
+        elif (accuracy - last_epoch_acc) < 0:
+            lr = sentiment_conf.initial_lr/10
+
+        elif lr > sentiment_conf.initial_lr/100:
             lr = lr/2
+
         last_epoch_acc = accuracy
 

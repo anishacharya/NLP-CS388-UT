@@ -36,7 +36,7 @@ elif model == 'RNN':
     batch_size = 64
     lr_schedule = 'None'  # None / CLR / CALR
     optimizer = 'adam'  # adagrad
-    initial_lr = 0.001
+    initial_lr = 0.01
     lr_decay = 0.1
     weight_decay = 1e-4
     dropout = 0.2
@@ -45,7 +45,7 @@ elif model == 'RNN':
     no_of_rec_units = 2
     # inside RNN unit
     hidden_size = 100
-    rnn_dropout = 0.1
+    rnn_dropout = 0.05
 
 """ ElMo Config """
 
