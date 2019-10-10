@@ -24,6 +24,7 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
                         word_embed: WordEmbedding):
     model = RNN(conf=sentiment_conf, word_embed=word_embed)
     acc = 0.0
+    last_epoch_acc = 0.0
     lr = sentiment_conf.initial_lr
     lr_decay = sentiment_conf.lr_decay
     weight_decay = sentiment_conf.weight_decay
@@ -49,11 +50,12 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
         for start_ix in range(0, len(train_data), batch_size):
             x_batch = get_batch(data=x_padded, start_ix=start_ix, batch_size=batch_size)
             y_batch = get_batch(data=y_padded, start_ix=start_ix, batch_size=batch_size)
-            model.zero_grad()
+
             probs = model(x_batch)
             loss = loss_function(probs, y_batch)
             total_loss += loss / batch_size
             no_of_batch += 1
+            model.zero_grad()
             loss.backward()
             optimizer.step()
             # print('Current Batch Loss is: {}'.format(loss/batch_size))
@@ -66,6 +68,7 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
         print(" ========  Performance after epoch {} is ====== ".format(epoch))
         print("New Accuracy = ", accuracy)
         lr = lr/2
+        last_epoch_acc = accuracy
         if accuracy > acc:
             acc = accuracy
             print("==== saving model ====")
@@ -77,6 +80,6 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
                 test_predicted.append(SentimentExample(label=int(pred), indexed_words=data_point.indexed_words))
             # Write the test set output
             write_sentiment_examples(test_predicted, sentiment_conf.output_path, word_embed.word_ix)
-        if accuracy - acc < 0:
-            lr = sentiment_conf.initial_lr
+        if accuracy - last_epoch_acc < 0:
+            lr = sentiment_conf.initial_lr/2
 
