@@ -67,8 +67,7 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
                                                 word_embedding=word_embed, model_type='RNN')
         print(" ========  Performance after epoch {} is ====== ".format(epoch))
         print("New Accuracy = ", accuracy)
-        lr = lr/2
-        last_epoch_acc = accuracy
+
         if accuracy > acc:
             acc = accuracy
             print("==== saving model ====")
@@ -79,7 +78,13 @@ def train_sentiment_rnn(train_data: List[SentimentExample],
             for pred, data_point in zip(y_pred, test_data):
                 test_predicted.append(SentimentExample(label=int(pred), indexed_words=data_point.indexed_words))
             # Write the test set output
+            print('writing Test Output')
             write_sentiment_examples(test_predicted, sentiment_conf.output_path, word_embed.word_ix)
-        if accuracy - last_epoch_acc < 0:
+            print('Done Writing Test Output')
+            lr = lr/2
+        elif (accuracy - last_epoch_acc) < - 0.01:
             lr = sentiment_conf.initial_lr/2
+        else:
+            lr = lr/2
+        last_epoch_acc = accuracy
 

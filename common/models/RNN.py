@@ -47,7 +47,7 @@ class RNN(nn.Module):
         embedded_data = self.embedding(data_batch)
         rnn_out, (rnn_hidden, rnn_cell) = self.rnn(embedded_data)
         # concat from both the directions
-        rnn_hidden = torch.cat((rnn_hidden[-2, :, :], rnn_hidden[-1, :, :]), dim=1)
+        rnn_hidden = self.dropout(torch.cat((rnn_hidden[-2, :, :], rnn_hidden[-1, :, :]), dim=1))
         posterior = torch.sigmoid(self.hidden2tag(rnn_hidden).squeeze(1))
         # posterior = self.hidden2tag(rnn_hidden).squeeze(1)
         return posterior
