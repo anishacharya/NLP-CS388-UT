@@ -1,5 +1,23 @@
+from common.utils.utils import argmax_from_onehot
 import sklearn.metrics as metrics
 import numpy as np
+import torch
+
+
+def binary_accuracy(y_hat, y):
+    # round predictions to the closest integer
+    correct = 0
+    examples = len(y)
+    for pred, true in zip(y_hat, y):
+        y_pred = argmax_from_onehot(pred)
+        y_true = argmax_from_onehot(true)
+        if y_pred == y_true:
+            correct += 1
+    acc = float(correct)/float(examples)
+    #y_hat = torch.round(y_hat)
+    #correct = (y_hat == y).float()
+    #acc = correct.sum() / len(correct)
+    return acc
 
 
 class ClassificationEval:

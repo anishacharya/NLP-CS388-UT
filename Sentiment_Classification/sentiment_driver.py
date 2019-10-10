@@ -17,7 +17,7 @@ from Sentiment_Classification.src.classifiers.ffnn_sentiment_driver import train
 from Sentiment_Classification.src.classifiers.rnn_sentiment_driver import train_sentiment_rnn
 from Sentiment_Classification.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
                                                                             write_sentiment_examples)
-from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment
+from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment, evaluate_sentiment_simple
 from Sentiment_Classification.src.data_utils.definitions import SentimentExample
 
 
@@ -80,20 +80,25 @@ if __name__ == '__main__':
     elif args.model == 'RNN':
         train_sentiment_rnn(train_data=train_data,
                             dev_data=dev_data,
+                            test_data=test_data,
                             word_embed=word_embedding)
         model = RNN(conf=sentiment_conf, word_embed=word_embedding)
         model.load_state_dict(torch.load(sentiment_conf.model_path))
     else:
         raise NotImplementedError
-    _, metrics = evaluate_sentiment(model=model, data=dev_data,
-                                    word_embedding=word_embedding, model_type=args.model)
-    print("Final Dev Accuracy = ", metrics.accuracy)
+    # _, metrics = evaluate_sentiment(model=model, data=dev_data,
+    #                                 word_embedding=word_embedding, model_type=args.model)
+    _, accuracy = evaluate_sentiment_simple(model=model, data=dev_data,
+                                            word_embedding=word_embedding, model_type=args.model)
+    print("Final Dev Accuracy = ", accuracy)
 
-    if args.run_on_test is True:
-        y_pred, _ = evaluate_sentiment(model=model, model_type=args.model,
-                                       word_embedding=word_embedding, data=test_data)
-        test_predicted = []
-        for pred, data_point in zip(y_pred, test_data):
-            test_predicted.append(SentimentExample(label=int(pred), indexed_words=data_point.indexed_words))
-        # Write the test set output
-        write_sentiment_examples(test_predicted, args.test_output_path, word_embedding.word_ix)
+    # if args.run_on_test is True:
+    #     # y_pred, _ = evaluate_sentiment(model=model, model_type=args.model,
+    #     #                                word_embedding=word_embedding, data=test_data)
+    #     y_pred, _ = evaluate_sentiment(model=model, model_type=args.model,
+    #                                    word_embedding=word_embedding, data=test_data)
+    #     test_predicted = []
+    #     for pred, data_point in zip(y_pred, test_data):
+    #         test_predicted.append(SentimentExample(label=int(pred), indexed_words=data_point.indexed_words))
+    #     # Write the test set output
+    #     write_sentiment_examples(test_predicted, args.test_output_path, word_embedding.word_ix)
