@@ -6,4 +6,4 @@ EOS_TOKEN = "__EOS__"   # End of sentence token
 
 
 """ define different pre-trained flat embedding locations"""
-glove = '/Users/anishacharya/Desktop/LIBRARY/Embeddings/glove.6B/glove.6B.300d.txt'
+glove = '/Users/aa56927-admin/Desktop/glove.840B.300d.txt'

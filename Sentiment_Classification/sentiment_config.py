@@ -1,11 +1,12 @@
 
 """ Driver args  """
-data_path = '/Users/anishacharya/Desktop/UT_Fall_2019/NLP/NLP_Done_Right/Sentiment_Classification/data/Rotten_Tomatoes/'
+data_path = '/Users/aa56927-admin/Desktop/NLP_Done_Right/Sentiment_Classification/data/Rotten_Tomatoes/'
 output_path = 'test-blind.output.txt'
-model = 'RNN'  # RNN, FFNN
+model = 'FFNN'  # RNN, FFNN
 run_on_test_flag = True
+run_on_manual_flag = True
 seq_max_len = 60  # also can be computed more systematically looking at length distribution in corpus
-model_path = './model'
+model_path = './model.pt'
 
 
 if model == 'FFNN':

@@ -37,6 +37,8 @@ def _parse_args():
                         help='output path for test predictions')
     parser.add_argument('--no_run_on_test', dest='run_on_test', default=sentiment_conf.run_on_test_flag,
                         action='store_false', help='skip printing output on the test set')
+    parser.add_argument('--no_run_on_manual', dest='run_on_manual', default=sentiment_conf.run_on_manual_flag,
+                        action='store_false', help='skip printing output on the manual set')
     args = parser.parse_args()
     return args
 
@@ -92,6 +94,16 @@ if __name__ == '__main__':
                                             word_embedding=word_embedding, model_type=args.model)
     print("Final Dev Accuracy = ", accuracy)
 
+    if args.run_on_manual is True:
+        y_pred, _ = evaluate_sentiment_simple(model=model, model_type='RNN',
+                                              word_embedding=word_embedding, data=test_data)
+        test_predicted = []
+        for pred, data_point in zip(y_pred, test_data):
+            test_predicted.append(SentimentExample(label=int(pred), indexed_words=data_point.indexed_words))
+        # Write the test set output
+        print('writing Manual Output')
+        write_sentiment_examples(test_predicted, sentiment_conf.output_path, word_embedding.word_ix)
+        print('Done Writing Manual Output')
     # if args.run_on_test is True:
     #     # y_pred, _ = evaluate_sentiment(model=model, model_type=args.model,
     #     #                                word_embedding=word_embedding, data=test_data)
