@@ -14,8 +14,6 @@ class WordEmbedding:
         self.emb_dim = 0
         self.ix2embed = self.load_and_index_word_embedding()
 
-
-
     def load_and_index_word_embedding(self) -> Dict:
         """
         Read a GloVe txt file.we return dictionary
