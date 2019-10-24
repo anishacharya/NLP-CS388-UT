@@ -1,4 +1,4 @@
-from semantic_parsing.src.evaluator.lf_evaluator import *
+from semantic_parsing.src.data_utils.data_utils import *
 from semantic_parsing.src.evaluator.evaluate import evaluate
 import semantic_parsing.semantic_parser_config as parser_config
 import argparse
@@ -37,7 +37,7 @@ def _parse_args():
     # 65 is all you need for GeoQuery
     parser.add_argument('--decoder_len_limit', type=int, default=65, help='output length limit of the decoder')
 
-    # Feel free to add other hyperparameters for your input dimension, etc. to control your network
+    # Feel free to add other hyper-parameters for your input dimension, etc. to control your network
     # 50-200 might be a good range to start with for embedding and LSTM sizes
     args = parser.parse_args()
     return args
