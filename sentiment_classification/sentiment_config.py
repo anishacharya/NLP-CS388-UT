@@ -1,6 +1,6 @@
 
 """ Driver args  """
-data_path = '/Users/aa56927-admin/Desktop/NLP_Done_Right/Sentiment_Classification/data/Rotten_Tomatoes/'
+data_path = '/Users/aa56927-admin/Desktop/NLP_Done_Right/sentiment_classification/data/Rotten_Tomatoes/'
 output_path = 'test-blind.output.txt'
 model = 'FFNN'  # RNN, FFNN
 run_on_test_flag = True

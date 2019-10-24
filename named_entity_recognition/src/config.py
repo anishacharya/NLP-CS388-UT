@@ -1,5 +1,5 @@
 """ Driver args -> specify model, mode, file paths etc"""
-data_path = '/Users/anishacharya/Desktop/UT_Fall_2019/NLP/NLP_Done_Right/Named_Entity_Recognition/data/CONLL_2003/'
+data_path = '/Users/anishacharya/Desktop/UT_Fall_2019/NLP/NLP_Done_Right/named_entity_recognition/data/CONLL_2003/'
 language = 'eng'  # eng, du
 
 model = 'ECRF'  # (Binary: COUNT, MLP; MultiClass: COUNT, HMM, CRF, ECRF, MLP)'

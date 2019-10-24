@@ -12,13 +12,13 @@ from common.utils.embedding import WordEmbedding
 from common.models.FFNN import FFNN
 from common.models.RNN import RNN
 
-import Sentiment_Classification.sentiment_config as sentiment_conf
-from Sentiment_Classification.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
-from Sentiment_Classification.src.classifiers.rnn_sentiment_driver import train_sentiment_rnn
-from Sentiment_Classification.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
+import sentiment_classification.sentiment_config as sentiment_conf
+from sentiment_classification.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn
+from sentiment_classification.src.classifiers.rnn_sentiment_driver import train_sentiment_rnn
+from sentiment_classification.src.data_utils.rotten_tomatoes_reader import (read_and_index_sentiment_examples,
                                                                             write_sentiment_examples)
-from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment, evaluate_sentiment_simple
-from Sentiment_Classification.src.data_utils.definitions import SentimentExample
+from sentiment_classification.src.evaluation.evaluate import evaluate_sentiment, evaluate_sentiment_simple
+from sentiment_classification.src.data_utils.definitions import SentimentExample
 
 
 def _parse_args():

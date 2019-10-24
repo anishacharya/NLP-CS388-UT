@@ -1,5 +1,5 @@
-from Sentiment_Classification.src.data_utils.definitions import SentimentExample
-import Sentiment_Classification.sentiment_config as sentiment_config
+from sentiment_classification.src.data_utils.definitions import SentimentExample
+import sentiment_classification.sentiment_config as sentiment_config
 
 from common.utils.embedding import WordEmbedding, SentenceEmbedding
 from common.utils.utils import get_onehot_np, pad_to_length

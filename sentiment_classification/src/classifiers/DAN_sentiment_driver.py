@@ -3,10 +3,10 @@ import common.common_config as common_conf
 from common.models.RNN import RNN
 from common.utils.utils import get_batch
 
-from Sentiment_Classification.src.data_utils.definitions import SentimentExample
-import Sentiment_Classification.sentiment_config as sentiment_conf
-from Sentiment_Classification.src.utils import get_xy_padded, get_xy
-from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment
+from sentiment_classification.src.data_utils.definitions import SentimentExample
+import sentiment_classification.sentiment_config as sentiment_conf
+from sentiment_classification.src.utils import get_xy_padded, get_xy
+from sentiment_classification.src.evaluation.evaluate import evaluate_sentiment
 
 import torch
 import torch.optim as optim

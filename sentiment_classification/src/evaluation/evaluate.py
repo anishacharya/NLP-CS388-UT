@@ -1,7 +1,7 @@
 from common.evaluation.evaluate_classifier import ClassificationEval, binary_accuracy
 from common.utils.embedding import WordEmbedding
-from Sentiment_Classification.src.data_utils.definitions import SentimentExample
-from Sentiment_Classification.src.utils import get_xy_embedded, get_xy_padded
+from sentiment_classification.src.data_utils.definitions import SentimentExample
+from sentiment_classification.src.utils import get_xy_embedded, get_xy_padded
 from common.utils.utils import argmax_from_onehot
 import numpy as np
 

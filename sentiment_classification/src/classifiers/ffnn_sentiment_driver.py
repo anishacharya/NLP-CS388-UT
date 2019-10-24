@@ -1,7 +1,7 @@
-from Sentiment_Classification.src.data_utils.definitions import SentimentExample
-from Sentiment_Classification.src.utils import get_xy_embedded
-import Sentiment_Classification.sentiment_config as sentiment_conf
-from Sentiment_Classification.src.evaluation.evaluate import evaluate_sentiment
+from sentiment_classification.src.data_utils.definitions import SentimentExample
+from sentiment_classification.src.utils import get_xy_embedded
+import sentiment_classification.sentiment_config as sentiment_conf
+from sentiment_classification.src.evaluation.evaluate import evaluate_sentiment
 
 from common.utils.embedding import WordEmbedding
 from common.utils.utils import get_batch
