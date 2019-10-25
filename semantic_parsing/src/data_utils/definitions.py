@@ -1,3 +1,6 @@
+from typing import List
+
+
 class Example(object):
     """
     Wrapper class for a single (natural language, logical form) input/output (x/y) pair

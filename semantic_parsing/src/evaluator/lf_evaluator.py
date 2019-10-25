@@ -134,7 +134,7 @@ class GeoqueryDomain(object):
         # exit()
         #####
         try:
-            msg = subprocess.check_output(['evaluator/geoquery', tf.name]).decode("utf-8")
+            msg = subprocess.check_output(['geoquery', tf.name]).decode("utf-8")
             # Alternate form with the whole java command
             # msg = subprocess.check_output(['java', '-ea', '-server',
             # '-Xss8m', '-cp', 'evaluator/evaluator.jar:lib/scala-compiler.jar:lib/scala-library.jar:lib/fig.jar:lib

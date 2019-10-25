@@ -6,7 +6,6 @@ import semantic_parsing.semantic_parser_config as parser_config
 import argparse
 import numpy as np
 import random
-from typing import List
 
 
 def _parse_args():
