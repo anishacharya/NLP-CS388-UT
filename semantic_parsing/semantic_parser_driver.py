@@ -1,8 +1,11 @@
-from semantic_parsing.src.data_utils.data_utils import *
+from semantic_parsing.src.data_utils.data_utils import load_datasets, index_datasets
 from semantic_parsing.src.evaluator.evaluate import evaluate
+from semantic_parsing.src.parsers.NearestNeighbour import NearestNeighborSemanticParser
 import semantic_parsing.semantic_parser_config as parser_config
+
 import argparse
 import numpy as np
+import random
 from typing import List
 
 
@@ -39,43 +42,7 @@ def _parse_args():
 
     # Feel free to add other hyper-parameters for your input dimension, etc. to control your network
     # 50-200 might be a good range to start with for embedding and LSTM sizes
-    args = parser.parse_args()
-    return args
-
-
-class NearestNeighborSemanticParser(object):
-    """
-    Semantic parser that uses Jaccard similarity to find the most similar input example to a particular question and
-    returns the associated logical form.
-    """
-
-    def __init__(self, training_data: List[Example]):
-        self.training_data = training_data
-
-    def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
-        """
-        :param test_data: List[Example] to decode
-        :return: A list of k-best lists of Derivations. A Derivation consists of the underlying Example, a probability,
-        and a tokenized input string. If you're just doing one-best decoding of example ex and you
-        produce output y_tok, you can just return the k-best list [Derivation(ex, 1.0, y_tok)]
-        """
-        test_derivs = []
-        for test_ex in test_data:
-            test_words = test_ex.x_tok
-            best_jaccard = -1
-            best_train_ex = None
-            # Find the highest word overlap with the train data
-            for train_ex in self.training_data:
-                # Compute word overlap
-                train_words = train_ex.x_tok
-                overlap = len(frozenset(train_words) & frozenset(test_words))
-                jaccard = overlap / float(len(frozenset(train_words) | frozenset(test_words)))
-                if jaccard > best_jaccard:
-                    best_jaccard = jaccard
-                    best_train_ex = train_ex
-            # N.B. a list!
-            test_derivs.append([Derivation(test_ex, 1.0, best_train_ex.y_tok)])
-        return test_derivs
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
@@ -86,11 +53,11 @@ if __name__ == '__main__':
     # Load the training and test data
 
     train, dev, test = load_datasets(args.train_path, args.dev_path, args.test_path, domain=args.domain)
-    train_data_indexed, dev_data_indexed, test_data_indexed, input_indexer, output_indexer = index_datasets(train, dev,
-                                                                                                            test,
-                                                                                                            args.decoder_len_limit)
+    train_data_indexed, dev_data_indexed, test_data_indexed, input_indexer, output_indexer = \
+        index_datasets(train, dev, test, args.decoder_len_limit)
+
     print("%i train exs, %i dev exs, %i input types, %i output types" % (
-    len(train_data_indexed), len(dev_data_indexed), len(input_indexer), len(output_indexer)))
+        len(train_data_indexed), len(dev_data_indexed), len(input_indexer), len(output_indexer)))
     print("Input indexer: %s" % input_indexer)
     print("Output indexer: %s" % output_indexer)
     print("Here are some examples post tokenization and indexing:")
@@ -104,5 +71,3 @@ if __name__ == '__main__':
     #    decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, args)
     print("=======FINAL EVALUATION ON BLIND TEST=======")
     evaluate(test_data_indexed, decoder, print_output=False, outfile="geo_test_output.tsv")
-
-

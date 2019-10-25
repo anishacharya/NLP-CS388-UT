@@ -1,64 +1,12 @@
 from common.utils.indexer import Indexer
+from common.common_config import EOS_TOKEN, BOS_TOKEN, PAD_TOKEN, UNK_TOKEN
+from semantic_parsing.src.data_utils.definitions import Example
 from typing import List, Tuple
-import random
 from collections import Counter
 
 
-class Example(object):
-    """
-    Wrapper class for a single (natural language, logical form) input/output (x/y) pair
-    Attributes:
-        x: the natural language as one string
-        x_tok: tokenized natural language as a list of strings
-        x_indexed: indexed tokens, a list of ints
-        y: the raw logical form as a string
-        y_tok: tokenized logical form, a list of strings
-        y_indexed: indexed logical form, a list of ints
-    """
-    def __init__(self, x: str, x_tok: List[str], x_indexed: List[int], y, y_tok, y_indexed):
-        self.x = x
-        self.x_tok = x_tok
-        self.x_indexed = x_indexed
-        self.y = y
-        self.y_tok = y_tok
-        self.y_indexed = y_indexed
-
-    def __repr__(self):
-        return " ".join(self.x_tok) + " => " + " ".join(self.y_tok) + "\n   indexed as: " + repr(self.x_indexed) + " => " + repr(self.y_indexed)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-#
-class Derivation(object):
-    """
-    Wrapper for a possible solution returned by the model associated with an Example. Note that y_toks here is a
-    predicted y_toks, and the Example itself contains the gold y_toks.
-    Attributes:
-          example: The underlying Example we're predicting on
-          p: the probability associated with this prediction
-          y_toks: the tokenized output prediction
-    """
-    def __init__(self, example: Example, p, y_toks):
-        self.example = example
-        self.p = p
-        self.y_toks = y_toks
-
-    def __str__(self):
-        return "%s (%s)" % (self.y_toks, self.p)
-
-    def __repr__(self):
-        return self.__str__()
-
-
-PAD_SYMBOL = "<PAD>"
-UNK_SYMBOL = "<UNK>"
-SOS_SYMBOL = "<SOS>"
-EOS_SYMBOL = "<EOS>"
-
-
-def load_datasets(train_path: str, dev_path: str, test_path: str, domain=None) -> (List[Tuple[str,str]], List[Tuple[str,str]], List[Tuple[str,str]]):
+def load_datasets(train_path: str, dev_path: str, test_path: str, domain=None) -> \
+        (List[Tuple[str, str]], List[Tuple[str, str]], List[Tuple[str, str]]):
     """
     Reads the training, dev, and test data from the corresponding files.
     :param train_path:
@@ -73,7 +21,7 @@ def load_datasets(train_path: str, dev_path: str, test_path: str, domain=None) -
     return train_raw, dev_raw, test_raw
 
 
-def load_dataset(filename: str, domain="geo") -> List[Tuple[str,str]]:
+def load_dataset(filename: str, domain="geo") -> List[Tuple[str, str]]:
     """
     Reads a dataset in from the given file.
     :param filename:
@@ -87,7 +35,7 @@ def load_dataset(filename: str, domain="geo") -> List[Tuple[str,str]]:
             x, y = line.rstrip('\n').split('\t')
             # Geoquery features some additional preprocessing of the logical form
             if domain == "geo":
-                y = geoquery_preprocess_lf(y)
+                y = geoquery_pre_process_lf(y)
             dataset.append((x, y))
     print("%i / %i pos exs" % (num_pos, len(dataset)))
     return dataset
@@ -102,7 +50,7 @@ def tokenize(x) -> List[str]:
 
 
 def index(x_tok: List[str], indexer: Indexer) -> List[int]:
-    return [indexer.index_of(xi) if indexer.index_of(xi) >= 0 else indexer.index_of(UNK_SYMBOL) for xi in x_tok]
+    return [indexer.index_of(xi) if indexer.index_of(xi) >= 0 else indexer.index_of(UNK_TOKEN) for xi in x_tok]
 
 
 def index_data(data, input_indexer: Indexer, output_indexer: Indexer, example_len_limit):
@@ -119,11 +67,12 @@ def index_data(data, input_indexer: Indexer, output_indexer: Indexer, example_le
         x_tok = tokenize(x)
         y_tok = tokenize(y)[0:example_len_limit]
         data_indexed.append(Example(x, x_tok, index(x_tok, input_indexer), y, y_tok,
-                                          index(y_tok, output_indexer) + [output_indexer.index_of(EOS_SYMBOL)]))
+                                    index(y_tok, output_indexer) + [output_indexer.index_of(EOS_TOKEN)]))
     return data_indexed
 
 
-def index_datasets(train_data, dev_data, test_data, example_len_limit, unk_threshold=0.0) -> (List[Example], List[Example], List[Example], Indexer, Indexer):
+def index_datasets(train_data, dev_data, test_data, example_len_limit, unk_threshold=0.0) -> \
+        (List[Example], List[Example], List[Example], Indexer, Indexer):
     """
     Indexes train and test datasets where all words occurring less than or equal to unk_threshold times are
     replaced by UNK tokens.
@@ -143,11 +92,12 @@ def index_datasets(train_data, dev_data, test_data, example_len_limit, unk_thres
     input_indexer = Indexer()
     output_indexer = Indexer()
     # Reserve 0 for the pad symbol for convenience
-    input_indexer.add_and_get_index(PAD_SYMBOL)
-    input_indexer.add_and_get_index(UNK_SYMBOL)
-    output_indexer.add_and_get_index(PAD_SYMBOL)
-    output_indexer.add_and_get_index(SOS_SYMBOL)
-    output_indexer.add_and_get_index(EOS_SYMBOL)
+    input_indexer.add_and_get_index(PAD_TOKEN)
+    input_indexer.add_and_get_index(UNK_TOKEN)
+
+    output_indexer.add_and_get_index(PAD_TOKEN)
+    output_indexer.add_and_get_index(BOS_TOKEN)
+    output_indexer.add_and_get_index(EOS_TOKEN)
     # Index all input words above the UNK threshold
     for word in input_word_counts.keys():
         if input_word_counts[word] > unk_threshold + 0.5:
@@ -209,9 +159,9 @@ def render_ratio(numer, denom):
     return "%i / %i = %.3f" % (numer, denom, float(numer) / denom)
 
 
-def geoquery_preprocess_lf(lf):
+def geoquery_pre_process_lf(lf):
     """
-    Geoquery preprocessing adapted from Jia and Liang. Standardizes variable names with De Brujin indices -- just a
+    Geoquery pre processing adapted from Jia and Liang. Standardizes variable names with De Brujin indices -- just a
     smarter way of indexing variables in statements to make parsing easier.
     :param lf:
     :return:
