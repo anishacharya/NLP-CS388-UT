@@ -1,6 +1,6 @@
 from common.utils.indexer import Indexer
 from common.common_config import EOS_TOKEN, BOS_TOKEN, PAD_TOKEN, UNK_TOKEN
-from semantic_parsing.src.data_utils.definitions import Example
+from semantic_parsing.data_utils.definitions import Example
 from typing import List, Tuple
 from collections import Counter
 

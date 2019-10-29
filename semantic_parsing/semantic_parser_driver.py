@@ -1,6 +1,6 @@
-from semantic_parsing.src.data_utils.data_utils import load_datasets, index_datasets
-from semantic_parsing.src.evaluate import evaluate
-from semantic_parsing.src.parsers.NearestNeighbour import NearestNeighborSemanticParser
+from semantic_parsing.data_utils.data_utils import load_datasets, index_datasets
+from semantic_parsing.evaluate import evaluate
+from semantic_parsing.parsers.NearestNeighbour import NearestNeighborSemanticParser
 import semantic_parsing.semantic_parser_config as parser_config
 
 import argparse

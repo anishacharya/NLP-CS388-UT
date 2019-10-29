@@ -1,4 +1,4 @@
-from semantic_parsing.src.data_utils.definitions import Derivation, Example
+from semantic_parsing.data_utils.definitions import Derivation, Example
 from typing import List
 
 

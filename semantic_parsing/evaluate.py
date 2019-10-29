@@ -1,6 +1,6 @@
 from semantic_parsing.lf_evaluator import *
-from semantic_parsing.src.data_utils.definitions import Example
-from semantic_parsing.src.data_utils.data_utils import print_evaluation_results
+from semantic_parsing.data_utils.definitions import Example
+from semantic_parsing.data_utils.data_utils import print_evaluation_results
 from typing import List
 
 
