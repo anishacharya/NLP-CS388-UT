@@ -13,8 +13,9 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+state/
+*.tsv
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
