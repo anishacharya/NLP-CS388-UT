@@ -34,12 +34,12 @@ class Derivation(object):
     predicted y_toks, and the Example itself contains the gold y_toks.
     Attributes:
           example: The underlying Example we're predicting on
-          p: the probability associated with this prediction
+          confidence: the probability associated with this prediction
           y_toks: the tokenized output prediction
     """
-    def __init__(self, example: Example, p, y_toks):
+    def __init__(self, example: Example, confidence, y_toks):
         self.example = example
-        self.p = p
+        self.confidence = confidence
         self.y_toks = y_toks
 
     def __str__(self):

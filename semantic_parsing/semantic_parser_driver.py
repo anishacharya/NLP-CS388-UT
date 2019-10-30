@@ -55,13 +55,13 @@ if __name__ == '__main__':
     train_data_indexed, dev_data_indexed, test_data_indexed, input_indexer, output_indexer = \
         index_datasets(train, dev, test, args.decoder_len_limit)
 
-    print("%i train exs, %i dev exs, %i input types, %i output types" % (
-        len(train_data_indexed), len(dev_data_indexed), len(input_indexer), len(output_indexer)))
-    print("Input indexer: %s" % input_indexer)
-    print("Output indexer: %s" % output_indexer)
-    print("Here are some examples post tokenization and indexing:")
-    for i in range(0, min(len(train_data_indexed), 10)):
-        print(train_data_indexed[i])
+    # print("%i train exs, %i dev exs, %i input types, %i output types" % (
+    #     len(train_data_indexed), len(dev_data_indexed), len(input_indexer), len(output_indexer)))
+    # print("Input indexer: %s" % input_indexer)
+    # print("Output indexer: %s" % output_indexer)
+    # print("Here are some examples post tokenization and indexing:")
+    # for i in range(0, min(len(train_data_indexed), 10)):
+    #     print(train_data_indexed[i])
     if args.do_nearest_neighbor:
         decoder = NearestNeighborSemanticParser(train_data_indexed)
         evaluate(dev_data_indexed, decoder)
@@ -69,4 +69,4 @@ if __name__ == '__main__':
         raise NotImplementedError
     #    decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, args)
     print("=======FINAL EVALUATION ON BLIND TEST=======")
-    evaluate(test_data_indexed, decoder, print_output=False, outfile="geo_test_output.tsv")
+    evaluate(test_data_indexed, decoder, outfile="geo_test_output.tsv")

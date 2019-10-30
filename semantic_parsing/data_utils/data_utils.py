@@ -133,11 +133,11 @@ def print_evaluation_results(test_data, selected_derivs, denotation_correct, exa
     total_tokens = 0
     for i, ex in enumerate(test_data):
         pred_y_toks = selected_derivs[i].y_toks if i < len(selected_derivs) else [""]
-        if i % example_freq == example_freq - 1:
-            print('Example %d' % i)
-            print('  x      = "%s"' % ex.x)
-            print('  y_tok  = "%s"' % ex.y_tok)
-            print('  y_pred = "%s"' % pred_y_toks)
+        # if i % example_freq == example_freq - 1:
+        #     print('Example %d' % i)
+        #     print('  x      = "%s"' % ex.x)
+        #     print('  y_tok  = "%s"' % ex.y_tok)
+        #     print('  y_pred = "%s"' % pred_y_toks)
         # Compute accuracy metrics
         y_pred = ' '.join(pred_y_toks)
         # Check exact match

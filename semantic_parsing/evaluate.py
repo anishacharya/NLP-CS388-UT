@@ -19,7 +19,7 @@ def evaluate(test_data: List[Example], decoder, example_freq=50, print_output=Tr
     """
     e = GeoqueryDomain()
     pred_derivations = decoder.decode(test_data)
-    selected_derivs, denotation_correct = e.compare_answers([ex.y for ex in test_data], pred_derivations)
+    selected_derivs, denotation_correct = e.compare_answers([ex.y for ex in test_data], pred_derivations, quiet=True)
     print_evaluation_results(test_data, selected_derivs, denotation_correct, example_freq, print_output)
     # Writes to the output file if needed
     if outfile is not None:
