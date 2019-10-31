@@ -9,8 +9,8 @@ sys.path.append(os.path.dirname(__file__) + '../.')
 import common.common_config as common_conf
 from common.utils.indexer import Indexer
 from common.utils.embedding import WordEmbedding
-from common.models.FFNN import FFNN
-from common.models.RNN import RNN
+from common.networks.FFNN import FFNN
+from common.networks.RNN import RNN
 
 import sentiment_classification.sentiment_config as sentiment_conf
 from sentiment_classification.src.classifiers.ffnn_sentiment_driver import train_sentiment_ffnn

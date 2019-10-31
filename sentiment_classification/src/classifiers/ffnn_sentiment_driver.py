@@ -5,7 +5,7 @@ from sentiment_classification.src.evaluation.evaluate import evaluate_sentiment
 
 from common.utils.embedding import WordEmbedding
 from common.utils.utils import get_batch
-from common.models.FFNN import FFNN
+from common.networks.FFNN import FFNN
 
 from typing import List
 from random import shuffle

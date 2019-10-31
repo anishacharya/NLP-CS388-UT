@@ -1,6 +1,7 @@
 from semantic_parsing.data_utils.data_utils import load_datasets, index_datasets
 from semantic_parsing.evaluate import evaluate
 from semantic_parsing.parsers.NearestNeighbour import NearestNeighborSemanticParser
+from semantic_parsing.parsers.Seq2SeqSemanticParser import Seq2SeqSemanticParser
 import semantic_parsing.semantic_parser_config as parser_config
 
 import argparse
@@ -17,9 +18,7 @@ def _parse_args():
     parser = argparse.ArgumentParser(description='main.py')
 
     # General system running and configuration options
-    parser.add_argument('--do_nearest_neighbor', dest='do_nearest_neighbor', default=True, action='store_true',
-                        help='run the nearest neighbor model')
-
+    parser.add_argument('--parser', default=parser_config.parser, help='choose the parser')
     parser.add_argument('--train_path', type=str, default=parser_config.data_path + '/geo_train.tsv',
                         help='path to train data')
     parser.add_argument('--dev_path', type=str, default=parser_config.data_path + '/geo_dev.tsv',
@@ -62,9 +61,12 @@ if __name__ == '__main__':
     # print("Here are some examples post tokenization and indexing:")
     # for i in range(0, min(len(train_data_indexed), 10)):
     #     print(train_data_indexed[i])
-    if args.do_nearest_neighbor:
+    if args.parser == 'NN':
         decoder = NearestNeighborSemanticParser(train_data_indexed)
         evaluate(dev_data_indexed, decoder)
+    elif args.parser == 'Seq2Seq':
+        decoder = Seq2SeqSemanticParser(training_data=train_data_indexed)
+        evaluate(dev_data=dev_data_indexed, decoder=decoder)
     else:
         raise NotImplementedError
     #    decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, args)

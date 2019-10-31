@@ -1,6 +1,6 @@
 from common.utils.embedding import WordEmbedding
 import common.common_config as common_conf
-from common.models.RNN import RNN
+from common.networks.RNN import RNN
 from common.utils.utils import get_batch
 
 from sentiment_classification.src.data_utils.definitions import SentimentExample

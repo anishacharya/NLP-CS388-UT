@@ -7,7 +7,7 @@ import src.config as conf
 
 class ProbabilisticSequenceScorer(object):
     """
-    Scoring function for sequence models based on conditional probabilities.
+    Scoring function for sequence networks based on conditional probabilities.
     Scores are provided for three potentials in the model: initial scores (applied to the first tag),
     emissions, and transitions. Note that CRFs typically don't use potentials of the first type.
 

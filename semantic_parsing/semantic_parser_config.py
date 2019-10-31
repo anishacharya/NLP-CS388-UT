@@ -2,6 +2,8 @@
 data_path = '/Users/aa56927-admin/Desktop/NLP_Done_Right/semantic_parsing/data'
 output_path = 'geo_test_output.tsv'
 
+parser = 'NN'
+
 model = 'FFNN'  # RNN, FFNN
 run_on_test_flag = True
 run_on_manual_flag = True
