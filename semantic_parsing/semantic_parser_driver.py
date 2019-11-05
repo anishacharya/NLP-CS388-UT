@@ -3,10 +3,14 @@ from semantic_parsing.evaluate import evaluate
 from semantic_parsing.parsers.NearestNeighbour import NearestNeighborSemanticParser
 from semantic_parsing.parsers.Seq2SeqSemanticParser import Seq2SeqSemanticParser
 import semantic_parsing.semantic_parser_config as parser_config
+from common.utils.embedding import WordEmbedding
+import common.common_config as common_conf
+import pickle
 
 import argparse
 import numpy as np
 import random
+import os
 
 
 def _parse_args():
@@ -65,7 +69,23 @@ if __name__ == '__main__':
         decoder = NearestNeighborSemanticParser(train_data_indexed)
         evaluate(dev_data_indexed, decoder)
     elif args.parser == 'Seq2Seq':
-        decoder = Seq2SeqSemanticParser(training_data=train_data_indexed)
+        if os.path.isfile(common_conf.embed_cache):
+            print(" Loading cached embedding index ")
+            with open(common_conf.embed_cache, 'rb') as handle:
+                ix2embed = pickle.load(handle)
+        else:
+            print(" creating embed ix and caching ")
+            ix2embed = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
+                                     word_indexer=input_indexer).ix2embed
+            with open(common_conf.embed_cache, 'wb') as handle:
+                pickle.dump(ix2embed, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        handle.close()
+
+        decoder = Seq2SeqSemanticParser(training_data=train_data_indexed,
+                                        dev_data=dev_data_indexed,
+                                        input_ix=input_indexer,
+                                        output_ix=output_indexer,
+                                        ix2embed=ix2embed)
         evaluate(dev_data=dev_data_indexed, decoder=decoder)
     else:
         raise NotImplementedError
