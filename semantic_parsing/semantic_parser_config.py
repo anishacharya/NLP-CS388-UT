@@ -1,5 +1,5 @@
 """ Driver args  """
-data_path = '/Users/anishacharya/Desktop/UT_Fall_2019/NLP/NLP_Done_Right/semantic_parsing/data'
+data_path = './data'
 output_path = 'geo_test_output.tsv'
 
 parser = 'Seq2Seq'  # 'NN'
@@ -19,7 +19,7 @@ weight_decay = 1e-4
 dropout = 0.2
 
 # Stacked RNN units
-no_of_rec_units = 2
+no_of_rec_units = 1
 # inside RNN unit
 hidden_size = 100
 rnn_dropout = 0.05

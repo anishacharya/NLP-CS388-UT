@@ -65,27 +65,31 @@ if __name__ == '__main__':
     # print("Here are some examples post tokenization and indexing:")
     # for i in range(0, min(len(train_data_indexed), 10)):
     #     print(train_data_indexed[i])
+
+    # Baseline Parser using Nearest Neighborhood matching
     if args.parser == 'NN':
         decoder = NearestNeighborSemanticParser(train_data_indexed)
         evaluate(dev_data_indexed, decoder)
+
+    # Simple Seq2Seq Parser
     elif args.parser == 'Seq2Seq':
         if os.path.isfile(common_conf.embed_cache):
             print(" Loading cached embedding index ")
             with open(common_conf.embed_cache, 'rb') as handle:
-                ix2embed = pickle.load(handle)
+                embed = pickle.load(handle)
         else:
             print(" creating embed ix and caching ")
-            ix2embed = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
-                                     word_indexer=input_indexer).ix2embed
+            embed = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
+                                  word_indexer=input_indexer)
             with open(common_conf.embed_cache, 'wb') as handle:
-                pickle.dump(ix2embed, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(embed, handle, protocol=pickle.HIGHEST_PROTOCOL)
         handle.close()
 
         decoder = Seq2SeqSemanticParser(training_data=train_data_indexed,
                                         dev_data=dev_data_indexed,
                                         input_ix=input_indexer,
                                         output_ix=output_indexer,
-                                        ix2embed=ix2embed)
+                                        embed=embed)
         evaluate(dev_data=dev_data_indexed, decoder=decoder)
     else:
         raise NotImplementedError
