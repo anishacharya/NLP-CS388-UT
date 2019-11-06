@@ -9,7 +9,9 @@ import common.common_config as common_conf
 
 from typing import List
 import torch.nn as nn
-import  torch.optim as optim
+import torch.optim as optim
+import torch
+import numpy as np
 
 
 class Seq2SeqSemanticParser(object):

@@ -4,6 +4,7 @@ from semantic_parsing.data_utils.definitions import Example
 from typing import List, Tuple
 from collections import Counter
 import torch
+import numpy as np
 
 
 def load_datasets(train_path: str, dev_path: str, test_path: str, domain=None) -> \
@@ -114,10 +115,18 @@ def index_datasets(train_data, dev_data, test_data, example_len_limit, unk_thres
     return train_data_indexed, dev_data_indexed, test_data_indexed, input_indexer, output_indexer
 
 
-def get_xy(data: List[Example]):
-    x = [torch.tensor(data=data_point.x_indexed, dtype=torch.int32) for data_point in data]
-    y = [torch.tensor(data=data_point.y_indexed, dtype=torch.int32) for data_point in data]
-    return x, y
+def get_xy(data: [Example]) -> [torch.Tensor, torch.Tensor]:
+    x = np.zeros((len(data), len(data[0].x_indexed)))
+    y = np.zeros((len(data), len(data[0].y_indexed)))
+    i = 0
+    for data_point in data:
+        x[i, :] = data_point.x_indexed
+        y[i, :] = data_point.y_indexed
+        i += 1
+        # x = torch.from_numpy(np.asarray(data_point.x_indexed))
+        # y = torch.from_numpy(np.asarray(data_point.y_indexed))
+    return torch.from_numpy(x).to(dtype=torch.long), torch.from_numpy(y).to(dtype=torch.long)
+
 
 ##################################################
 # YOU SHOULD NOT NEED TO LOOK AT THESE FUNCTIONS #

@@ -2,7 +2,7 @@
 """ Driver args  """
 data_path = '/Users/aa56927-admin/Desktop/NLP_Done_Right/sentiment_classification/data/Rotten_Tomatoes/'
 output_path = 'test-blind.output.txt'
-model = 'FFNN'  # RNN, FFNN
+model = 'RNN'  # RNN, FFNN
 run_on_test_flag = True
 run_on_manual_flag = True
 seq_max_len = 60  # also can be computed more systematically looking at length distribution in corpus
