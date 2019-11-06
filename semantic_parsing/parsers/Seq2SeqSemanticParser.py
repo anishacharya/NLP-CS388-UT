@@ -48,10 +48,12 @@ class Seq2SeqSemanticParser(object):
                                             add_and_get_index(common_conf.PAD_TOKEN))
 
         for epoch in range(0, epochs):
+            epoch_loss = 0
             for data_point in self.train_data:
                 x, y = get_xy([data_point])
                 optimizer.zero_grad()
-                model(x)
+                pred = model(x=x, y=y)
+
 
         return model
 

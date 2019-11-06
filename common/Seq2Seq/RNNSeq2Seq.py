@@ -4,6 +4,7 @@ import common.common_config as common_conf
 import torch
 import torch.nn as nn
 import numpy as np
+import random
 
 
 class RNNEncoder(nn.Module):
@@ -109,14 +110,36 @@ class RNNSeq2Seq(nn.Module):
         self.encoder = encoder
         self.decoder = decoder
 
-    def forward(self, x, y):
+    def forward(self, x, y, teacher_forcing=0.0):
         op_len = y.shape[1]
         batch_size = y.shape[0]
         op_space = len(self.decoder.word_embed.word_ix)
 
         outputs = torch.zeros(op_len, batch_size, op_space)
 
+        _BOS_IX = self.decoder.word_embed.word_ix.objs_to_ints[common_conf.BOS_TOKEN]
+        input = torch.from_numpy(np.ones(batch_size) * _BOS_IX).to(dtype=torch.long)
         rnn_hidden, rnn_cell = self.encoder(x)
+
+        for t in range(1, op_len):
+            # insert input token embedding, previous hidden and previous cell states
+            # receive output tensor (predictions) and new hidden and cell states
+            output, hidden, cell = self.decoder(input, rnn_hidden, rnn_cell)
+
+            # place predictions in a tensor holding predictions for each token
+            outputs[t] = output
+
+            # decide if we are going to use teacher forcing or not
+            teacher_force = random.random() < teacher_forcing
+
+            # get the highest predicted token from our predictions
+            top1 = output.argmax(1)
+
+            # if teacher forcing, use actual next token as next input
+            # if not, use predicted token
+            input = y[t] if teacher_force else top1
+
+        return outputs
 
 
 
