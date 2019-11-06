@@ -81,6 +81,8 @@ class RNNDecoder(nn.Module):
                            batch_first=True)
         # self.hidden2tag = nn.Linear(in_features=self.hidden_size_rnn * 2,  # *2 since Bidirectional
         #                             out_features=self.nb_classes)
+        self.hidden2tag = nn.Linear(in_features=self.hidden_size_rnn,
+                                    out_features=len(self.word_embed.word_ix))
         self.dropout = nn.Dropout(p=self.dropout)
         self.init_weights()
 
@@ -93,6 +95,13 @@ class RNNDecoder(nn.Module):
             elif 'weight' in name:
                 nn.init.xavier_normal_(param)
 
+    def forward(self, input, hidden, cell):
+        input = input.unsqueeze(0)
+        embedded = self.dropout(self.embedding(input))
+        output, (hidden, cell) = self.rnn(embedded, (hidden, cell))
+        prediction = self.hidden2tag(output.squeeze(0))
+        return prediction, hidden, cell
+
 
 class RNNSeq2Seq(nn.Module):
     def __init__(self, encoder: RNNEncoder, decoder: RNNDecoder):
@@ -100,8 +109,14 @@ class RNNSeq2Seq(nn.Module):
         self.encoder = encoder
         self.decoder = decoder
 
-    def forward(self, x):
-        rnn_cell, rnn_hidden = self.encoder(x)
+    def forward(self, x, y):
+        op_len = y.shape[1]
+        batch_size = y.shape[0]
+        op_space = len(self.decoder.word_embed.word_ix)
+
+        outputs = torch.zeros(op_len, batch_size, op_space)
+
+        rnn_hidden, rnn_cell = self.encoder(x)
 
 
 
