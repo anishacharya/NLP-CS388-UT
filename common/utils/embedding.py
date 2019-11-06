@@ -40,9 +40,13 @@ class WordEmbedding:
         self.emb_dim = len(representation)
         _UNK_ix = self.word_ix.add_and_get_index(common_conf.UNK_TOKEN)
         _PAD_ix = self.word_ix.add_and_get_index(common_conf.PAD_TOKEN)
+        _BOS_ix = self.word_ix.add_and_get_index(common_conf.BOS_TOKEN)
+        _EOS_ix = self.word_ix.add_and_get_index(common_conf.EOS_TOKEN)
 
         index_to_embedding[_UNK_ix] = [0.0] * self.emb_dim
         index_to_embedding[_PAD_ix] = [0.0] * self.emb_dim
+        index_to_embedding[_BOS_ix] = [999] * self.emb_dim
+        index_to_embedding[_EOS_ix] = [9999] * self.emb_dim
 
         # For words in vocab that is not in glove initialize random normal
         for word_ix in self.word_ix.ints_to_objs.keys():
