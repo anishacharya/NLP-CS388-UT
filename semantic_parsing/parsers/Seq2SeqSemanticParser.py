@@ -1,6 +1,7 @@
 from semantic_parsing.data_utils.definitions import Example, Derivation
 import semantic_parsing.semantic_parser_config as parser_conf
 from semantic_parsing.data_utils.data_utils import get_xy
+from semantic_parsing.evaluate import evaluate
 
 from common.utils.indexer import Indexer
 from common.utils.embedding import WordEmbedding
@@ -42,6 +43,7 @@ class Seq2SeqSemanticParser(object):
         encoder = RNNEncoder(conf=parser_conf, word_embed=self.encoder_embed)
         decoder = RNNDecoder(conf=parser_conf, word_embed=self.decoder_embed)
         model = RNNSeq2Seq(encoder=encoder, decoder=decoder)
+        print(model)
 
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
         loss_function = nn.CrossEntropyLoss(ignore_index=self.encoder_embed.word_ix.
@@ -62,8 +64,24 @@ class Seq2SeqSemanticParser(object):
                 optimizer.step()
                 epoch_loss += loss.item()
             print(epoch_loss/len(self.train_data))
+            print('current dev acc')
+            # evaluate(dev_data=self.dev_data, decoder=self)
         return model
 
     def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
         # Implement the inference here
-        raise Exception("implement me!")
+        test_derivs = []
+        for data_point in test_data:
+            y_tok = []
+            x, y = get_xy([data_point])
+            y_pred = self.model(x=x, y=y, teacher_forcing=0.0)
+            y_pred = y_pred.view(-1, y_pred.shape[-1])
+            for t in y_pred:
+                pred_ix_t = t.argmax(0).item()
+                tok_t = self.output_ix.ints_to_objs[pred_ix_t]
+                y_tok.append(tok_t)
+
+            test_derivs.append([Derivation(data_point, 1.0, y_tok)])
+
+        return test_derivs
+        # raise Exception("implement me!")

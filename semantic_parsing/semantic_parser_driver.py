@@ -15,8 +15,7 @@ import os
 
 def _parse_args():
     """
-    Command-line arguments to the system. --model switches between the main modes you'll need to use. The other arguments
-    are provided for convenience.
+    Command-line arguments to the system. --model switches between the main modes you'll need to use.
     :return: the parsed args bundle
     """
     parser = argparse.ArgumentParser(description='main.py')
@@ -42,8 +41,6 @@ def _parse_args():
     # 65 is all you need for GeoQuery
     parser.add_argument('--decoder_len_limit', type=int, default=65, help='output length limit of the decoder')
 
-    # Feel free to add other hyper-parameters for your input dimension, etc. to control your network
-    # 50-200 might be a good range to start with for embedding and LSTM sizes
     return parser.parse_args()
 
 
@@ -57,14 +54,6 @@ if __name__ == '__main__':
     train, dev, test = load_datasets(args.train_path, args.dev_path, args.test_path, domain=args.domain)
     train_data_indexed, dev_data_indexed, test_data_indexed, input_indexer, output_indexer = \
         index_datasets(train, dev, test, args.decoder_len_limit)
-
-    # print("%i train exs, %i dev exs, %i input types, %i output types" % (
-    #     len(train_data_indexed), len(dev_data_indexed), len(input_indexer), len(output_indexer)))
-    # print("Input indexer: %s" % input_indexer)
-    # print("Output indexer: %s" % output_indexer)
-    # print("Here are some examples post tokenization and indexing:")
-    # for i in range(0, min(len(train_data_indexed), 10)):
-    #     print(train_data_indexed[i])
 
     # Baseline Parser using Nearest Neighborhood matching
     if args.parser == 'NN':
@@ -102,8 +91,8 @@ if __name__ == '__main__':
                                         ip_embed=ip_embed,
                                         op_embed=op_embed)
         evaluate(dev_data=dev_data_indexed, decoder=decoder)
+        # evaluate(dev_data=test_data_indexed, decoder=decoder)
     else:
         raise NotImplementedError
-    #    decoder = train_model_encdec(train_data_indexed, dev_data_indexed, input_indexer, output_indexer, args)
     print("=======FINAL EVALUATION ON BLIND TEST=======")
     evaluate(test_data_indexed, decoder, outfile="geo_test_output.tsv")

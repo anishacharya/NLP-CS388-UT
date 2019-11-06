@@ -116,6 +116,7 @@ class RNNSeq2Seq(nn.Module):
         op_space = len(self.decoder.word_embed.word_ix)
 
         outputs = torch.zeros(op_len, batch_size, op_space)
+        top_pred_container = np.array((batch_size, op_len))
 
         _BOS_IX = self.decoder.word_embed.word_ix.objs_to_ints[common_conf.BOS_TOKEN]
         next_timestep_input = torch.from_numpy(np.ones(batch_size) * _BOS_IX).to(dtype=torch.long)
@@ -125,8 +126,9 @@ class RNNSeq2Seq(nn.Module):
             output, hidden, cell = self.decoder(next_timestep_input, rnn_hidden, rnn_cell)
             outputs[t] = output
             teacher_force = random.random() < teacher_forcing
-            top1 = output.argmax(1)
-            next_timestep_input = y[t] if teacher_force else top1
+            top_pred = output.argmax(1)
+
+            next_timestep_input = y[:, t] if teacher_force else top_pred
 
         return outputs
 

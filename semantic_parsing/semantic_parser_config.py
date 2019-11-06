@@ -9,7 +9,7 @@ run_on_manual_flag = True
 seq_max_len = 60  # also can be computed more systematically looking at length distribution in corpus
 model_path = './model.pt'
 
-epochs = 30
+epochs = 1
 batch_size = 64
 lr_schedule = 'None'  # None / CLR / CALR
 optimizer = 'adam'  # adagrad
@@ -19,10 +19,10 @@ weight_decay = 1e-4
 dropout = 0.2
 
 # Stacked RNN units
-no_of_rec_units = 2
+no_of_rec_units = 4
 
 # inside RNN unit
 hidden_size = 100
-rnn_dropout = 0.05
+rnn_dropout = 0.2
 
 
