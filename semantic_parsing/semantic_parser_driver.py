@@ -73,23 +73,34 @@ if __name__ == '__main__':
 
     # Simple Seq2Seq Parser
     elif args.parser == 'Seq2Seq':
-        if os.path.isfile(common_conf.embed_cache):
+        if os.path.isfile(common_conf.encoder_embed_cache):
             print(" Loading cached embedding index ")
-            with open(common_conf.embed_cache, 'rb') as handle:
-                embed = pickle.load(handle)
+            with open(common_conf.encoder_embed_cache, 'rb') as handle:
+                ip_embed = pickle.load(handle)
+
+        if os.path.isfile(common_conf.decoder_embed_cache):
+            print(" Loading cached embedding index ")
+            with open(common_conf.decoder_embed_cache, 'rb') as handle:
+                op_embed = pickle.load(handle)
         else:
             print(" creating embed ix and caching ")
-            embed = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
-                                  word_indexer=input_indexer)
-            with open(common_conf.embed_cache, 'wb') as handle:
-                pickle.dump(embed, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            ip_embed = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
+                                     word_indexer=input_indexer)
+            op_embed = WordEmbedding(pre_trained_embedding_filename=common_conf.glove,
+                                     word_indexer=output_indexer)
+            with open(common_conf.encoder_embed_cache, 'wb') as handle:
+                pickle.dump(ip_embed, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+            with open(common_conf.decoder_embed_cache, 'wb') as handle:
+                pickle.dump(op_embed, handle, protocol=pickle.HIGHEST_PROTOCOL)
         handle.close()
 
         decoder = Seq2SeqSemanticParser(training_data=train_data_indexed,
                                         dev_data=dev_data_indexed,
                                         input_ix=input_indexer,
                                         output_ix=output_indexer,
-                                        embed=embed)
+                                        ip_embed=ip_embed,
+                                        op_embed=op_embed)
         evaluate(dev_data=dev_data_indexed, decoder=decoder)
     else:
         raise NotImplementedError

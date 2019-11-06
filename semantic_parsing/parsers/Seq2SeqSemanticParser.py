@@ -19,12 +19,14 @@ class Seq2SeqSemanticParser(object):
                  dev_data: List[Example],
                  input_ix: Indexer,
                  output_ix: Indexer,
-                 embed: WordEmbedding):
+                 ip_embed: WordEmbedding,
+                 op_embed: WordEmbedding):
         self.train_data = training_data
         self.dev_data = dev_data
         self.input_ix = input_ix
         self.output_ix = output_ix
-        self.embed = embed
+        self.encoder_embed = ip_embed
+        self.decoder_embed = op_embed
         self.model = self.train()
 
     def train(self):
@@ -37,12 +39,13 @@ class Seq2SeqSemanticParser(object):
         epochs = parser_conf.epochs
         batch_size = parser_conf.batch_size
 
-        encoder = RNNEncoder(conf=parser_conf, word_embed=self.embed)
-        decoder = RNNDecoder(conf=parser_conf)
+        encoder = RNNEncoder(conf=parser_conf, word_embed=self.encoder_embed)
+        decoder = RNNDecoder(conf=parser_conf, word_embed=self.decoder_embed)
         model = RNNSeq2Seq(encoder=encoder, decoder=decoder)
 
         optimizer = optim.Adam(model.parameters())
-        loss_function = nn.CrossEntropyLoss(ignore_index=self.embed.word_ix.add_and_get_index(common_conf.PAD_TOKEN))
+        loss_function = nn.CrossEntropyLoss(ignore_index=self.encoder_embed.word_ix.
+                                            add_and_get_index(common_conf.PAD_TOKEN))
 
         for epoch in range(0, epochs):
             for data_point in self.train_data:

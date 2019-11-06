@@ -19,7 +19,10 @@ weight_decay = 1e-4
 dropout = 0.2
 
 # Stacked RNN units
-no_of_rec_units = 1
+no_of_rec_units = 2
+
 # inside RNN unit
 hidden_size = 100
 rnn_dropout = 0.05
+
+
