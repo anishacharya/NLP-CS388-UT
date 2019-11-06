@@ -43,7 +43,7 @@ class Seq2SeqSemanticParser(object):
         decoder = RNNDecoder(conf=parser_conf, word_embed=self.decoder_embed)
         model = RNNSeq2Seq(encoder=encoder, decoder=decoder)
 
-        optimizer = optim.Adam(model.parameters())
+        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
         loss_function = nn.CrossEntropyLoss(ignore_index=self.encoder_embed.word_ix.
                                             add_and_get_index(common_conf.PAD_TOKEN))
 
@@ -52,9 +52,16 @@ class Seq2SeqSemanticParser(object):
             for data_point in self.train_data:
                 x, y = get_xy([data_point])
                 optimizer.zero_grad()
-                pred = model(x=x, y=y)
+                y_pred = model(x=x, y=y, teacher_forcing=0.5)
+                y_pred = y_pred.view(-1, y_pred.shape[-1])
+                y_true = y.view(-1)
 
-
+                loss = loss_function(y_pred, y_true)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
+                optimizer.step()
+                epoch_loss += loss.item()
+            print(epoch_loss/len(self.train_data))
         return model
 
     def decode(self, test_data: List[Example]) -> List[List[Derivation]]:

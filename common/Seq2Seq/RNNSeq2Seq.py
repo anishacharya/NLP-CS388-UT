@@ -118,26 +118,15 @@ class RNNSeq2Seq(nn.Module):
         outputs = torch.zeros(op_len, batch_size, op_space)
 
         _BOS_IX = self.decoder.word_embed.word_ix.objs_to_ints[common_conf.BOS_TOKEN]
-        input = torch.from_numpy(np.ones(batch_size) * _BOS_IX).to(dtype=torch.long)
+        next_timestep_input = torch.from_numpy(np.ones(batch_size) * _BOS_IX).to(dtype=torch.long)
         rnn_hidden, rnn_cell = self.encoder(x)
 
-        for t in range(1, op_len):
-            # insert input token embedding, previous hidden and previous cell states
-            # receive output tensor (predictions) and new hidden and cell states
-            output, hidden, cell = self.decoder(input, rnn_hidden, rnn_cell)
-
-            # place predictions in a tensor holding predictions for each token
+        for t in range(0, op_len):
+            output, hidden, cell = self.decoder(next_timestep_input, rnn_hidden, rnn_cell)
             outputs[t] = output
-
-            # decide if we are going to use teacher forcing or not
             teacher_force = random.random() < teacher_forcing
-
-            # get the highest predicted token from our predictions
             top1 = output.argmax(1)
-
-            # if teacher forcing, use actual next token as next input
-            # if not, use predicted token
-            input = y[t] if teacher_force else top1
+            next_timestep_input = y[t] if teacher_force else top1
 
         return outputs
 
