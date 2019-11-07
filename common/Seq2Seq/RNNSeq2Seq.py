@@ -13,31 +13,27 @@ class RNNEncoder(nn.Module):
         self.conf = conf
         self.word_embed = word_embed
         self.embed_weight_init = torch.from_numpy(np.asarray(list(word_embed.ix2embed.values())))
-        # self.nb_classes = self.conf.no_classes
-        self.hidden_size_rnn = self.conf.hidden_size
-        # self.rec_unit = conf.no_of_rec_unit
+        self.embed_dim = self.word_embed.emb_dim
+        self.pad_ix = self.word_embed.word_ix.add_and_get_index(common_conf.PAD_TOKEN)
+        self.hidden_size_rnn = self.conf.enc_hidden_size
         self.nb_rec_units = conf.no_of_rec_units
-        self.rnn_dropout = conf.rnn_dropout
+        self.rnn_dropout = conf.enc_rnn_dropout
         self.dropout = conf.dropout
 
         self.embedding = nn.Embedding(len(self.word_embed.word_ix),
-                                      embedding_dim=self.word_embed.emb_dim,
-                                      padding_idx=self.word_embed.word_ix.add_and_get_index(common_conf.PAD_TOKEN))
-        # _weight=self.embed_weight_init)
-        self.rnn = nn.LSTM(input_size=self.word_embed.emb_dim,
+                                      embedding_dim=self.embed_dim,
+                                      padding_idx=self.pad_ix)
+        self.rnn = nn.LSTM(input_size=self.embed_dim,
                            hidden_size=self.hidden_size_rnn,
                            num_layers=self.nb_rec_units,
                            bidirectional=False,
                            dropout=self.rnn_dropout,
                            batch_first=True)
-        # self.hidden2tag = nn.Linear(in_features=self.hidden_size_rnn * 2,  # *2 since Bidirectional
-        #                             out_features=self.nb_classes)
         self.dropout = nn.Dropout(p=self.dropout)
         self.init_weights()
 
     def init_weights(self):
         self.embedding.weight.data.copy_(self.embed_weight_init)
-        # nn.init.xavier_uniform_(self.hidden2tag.weight)
         for name, param in self.rnn.named_parameters():
             if 'bias' in name:
                 nn.init.constant_(param, 0.0)
@@ -45,7 +41,7 @@ class RNNEncoder(nn.Module):
                 nn.init.xavier_normal_(param)
 
     def forward(self, data_batch):
-        embedded_data = self.embedding(data_batch)
+        embedded_data = self.dropout(self.embedding(data_batch))
 
         # hidden = [n layers * n directions, batch size, hid dim]
         # cell = [n layers * n directions, batch size, hid dim]
@@ -60,36 +56,32 @@ class RNNEncoder(nn.Module):
 class RNNDecoder(nn.Module):
     def __init__(self, conf, word_embed: WordEmbedding):
         super(RNNDecoder, self).__init__()
-        self.conf = conf
         self.word_embed = word_embed
+        self.vocab_size = len(self.word_embed.word_ix)
         self.embed_weight_init = torch.from_numpy(np.asarray(list(word_embed.ix2embed.values())))
-        # self.nb_classes = self.conf.no_classes
-        self.hidden_size_rnn = self.conf.hidden_size
-        # self.rec_unit = conf.no_of_rec_unit
+        self.embed_dim = conf.dec_embed_dim
+        self.hidden_size_rnn = conf.dec_hidden_size
         self.nb_rec_units = conf.no_of_rec_units
-        self.rnn_dropout = conf.rnn_dropout
+        self.rnn_dropout = conf.dec_rnn_dropout
         self.dropout = conf.dropout
 
-        self.embedding = nn.Embedding(len(self.word_embed.word_ix),
-                                      embedding_dim=self.word_embed.emb_dim,
+        self.embedding = nn.Embedding(self.vocab_size,
+                                      embedding_dim=self.embed_dim,
                                       padding_idx=self.word_embed.word_ix.add_and_get_index(common_conf.PAD_TOKEN))
         # _weight=self.embed_weight_init)
-        self.rnn = nn.LSTM(input_size=self.word_embed.emb_dim,
+        self.rnn = nn.LSTM(input_size=self.embed_dim,
                            hidden_size=self.hidden_size_rnn,
                            num_layers=self.nb_rec_units,
                            bidirectional=False,
                            dropout=self.rnn_dropout,
                            batch_first=True)
-        # self.hidden2tag = nn.Linear(in_features=self.hidden_size_rnn * 2,  # *2 since Bidirectional
-        #                             out_features=self.nb_classes)
         self.hidden2tag = nn.Linear(in_features=self.hidden_size_rnn,
                                     out_features=len(self.word_embed.word_ix))
         self.dropout = nn.Dropout(p=self.dropout)
         self.init_weights()
 
     def init_weights(self):
-        self.embedding.weight.data.copy_(self.embed_weight_init)
-        # nn.init.xavier_uniform_(self.hidden2tag.weight)
+        nn.init.xavier_uniform_(self.hidden2tag.weight)
         for name, param in self.rnn.named_parameters():
             if 'bias' in name:
                 nn.init.constant_(param, 0.0)
@@ -116,7 +108,6 @@ class RNNSeq2Seq(nn.Module):
         op_space = len(self.decoder.word_embed.word_ix)
 
         outputs = torch.zeros(op_len, batch_size, op_space)
-        top_pred_container = np.array((batch_size, op_len))
 
         _BOS_IX = self.decoder.word_embed.word_ix.objs_to_ints[common_conf.BOS_TOKEN]
         next_timestep_input = torch.from_numpy(np.ones(batch_size) * _BOS_IX).to(dtype=torch.long)

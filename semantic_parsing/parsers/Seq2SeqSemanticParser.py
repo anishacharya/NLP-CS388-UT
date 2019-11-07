@@ -13,6 +13,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch
 import numpy as np
+import random
 
 
 class Seq2SeqSemanticParser(object):
@@ -50,11 +51,13 @@ class Seq2SeqSemanticParser(object):
                                             add_and_get_index(common_conf.PAD_TOKEN))
 
         for epoch in range(0, epochs):
+
+            random.shuffle(self.train_data)
             epoch_loss = 0
             for data_point in self.train_data:
                 x, y = get_xy([data_point])
                 optimizer.zero_grad()
-                y_pred = model(x=x, y=y, teacher_forcing=0.5)
+                y_pred = model(x=x, y=y, teacher_forcing=parser_conf.teacher_force_train)
                 y_pred = y_pred.view(-1, y_pred.shape[-1])
                 y_true = y.view(-1)
 
@@ -65,16 +68,21 @@ class Seq2SeqSemanticParser(object):
                 epoch_loss += loss.item()
             print(epoch_loss/len(self.train_data))
             print('current dev acc')
-            # evaluate(dev_data=self.dev_data, decoder=self)
+            pred_deriv = self.decode(test_data=self.dev_data, model=model)
+            evaluate(dev_data=self.dev_data, pred_derivations=pred_deriv)
+
         return model
 
-    def decode(self, test_data: List[Example]) -> List[List[Derivation]]:
+    def decode(self, test_data: List[Example], model=None) -> List[List[Derivation]]:
         # Implement the inference here
         test_derivs = []
         for data_point in test_data:
             y_tok = []
             x, y = get_xy([data_point])
-            y_pred = self.model(x=x, y=y, teacher_forcing=0.0)
+            if model is not None:
+                y_pred = model(x=x, y=y, teacher_forcing=parser_conf.teacher_force_test)
+            else:
+                y_pred = self.model(x=x, y=y, teacher_forcing=parser_conf.teacher_force_test)
             y_pred = y_pred.view(-1, y_pred.shape[-1])
             for t in y_pred:
                 pred_ix_t = t.argmax(0).item()

@@ -6,6 +6,6 @@ EOS_TOKEN = "__EOS__"   # End of sentence token
 
 
 """ define different pre-trained flat embedding locations"""
-glove = '../../Embeddings/glove.6B/glove.6B.300d.txt'
+glove = '../../Embeddings/glove.6B/glove.6B.50d.txt'
 encoder_embed_cache = 'encoder_cached_embedding'
 decoder_embed_cache = 'decoder_cached_embedding'
