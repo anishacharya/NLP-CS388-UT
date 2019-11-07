@@ -73,8 +73,7 @@ class RNNDecoder(nn.Module):
                            hidden_size=self.hidden_size_rnn,
                            num_layers=self.nb_rec_units,
                            bidirectional=False,
-                           dropout=self.rnn_dropout,
-                           batch_first=True)
+                           dropout=self.rnn_dropout)
         self.hidden2tag = nn.Linear(in_features=self.hidden_size_rnn,
                                     out_features=len(self.word_embed.word_ix))
         self.dropout = nn.Dropout(p=self.dropout)

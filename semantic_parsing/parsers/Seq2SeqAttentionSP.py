@@ -5,7 +5,7 @@ from semantic_parsing.evaluate import evaluate
 
 from common.utils.indexer import Indexer
 from common.utils.embedding import WordEmbedding
-from common.Seq2Seq.RNNSeq2Seq import RNNEncoder, RNNDecoder, RNNSeq2Seq
+from common.Seq2Seq.RNNSeq2SeqAttention import Encoder, Decoder, Seq2Seq
 import common.common_config as common_conf
 from common.utils.utils import get_batch
 
@@ -17,19 +17,15 @@ import numpy as np
 import random
 
 
-class Seq2SeqSemanticParser(object):
+class Seq2SeqAttentionSemanticParser(object):
     def __init__(self, training_data: List[Example],
                  dev_data: List[Example],
                  input_ix: Indexer,
-                 output_ix: Indexer,
-                 ip_embed: WordEmbedding,
-                 op_embed: WordEmbedding):
+                 output_ix: Indexer):
         self.train_data = training_data
         self.dev_data = dev_data
         self.input_ix = input_ix
         self.output_ix = output_ix
-        self.encoder_embed = ip_embed
-        self.decoder_embed = op_embed
         self.model = self.train()
 
     def train(self):
@@ -42,14 +38,13 @@ class Seq2SeqSemanticParser(object):
         epochs = parser_conf.epochs
         batch_size = parser_conf.batch_size
 
-        encoder = RNNEncoder(conf=parser_conf, word_embed=self.encoder_embed)
-        decoder = RNNDecoder(conf=parser_conf, word_embed=self.decoder_embed)
-        model = RNNSeq2Seq(encoder=encoder, decoder=decoder)
+        encoder = Encoder(conf=parser_conf)
+        decoder = Decoder(conf=parser_conf)
+        model = Seq2Seq(encoder=encoder, decoder=decoder)
         print(model)
 
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-        loss_function = nn.CrossEntropyLoss(ignore_index=self.encoder_embed.word_ix.
-                                            add_and_get_index(common_conf.PAD_TOKEN))
+        loss_function = nn.CrossEntropyLoss(ignore_index=self.input_ix.objs_to_ints[common_conf.PAD_TOKEN])
 
         for epoch in range(0, epochs):
 
@@ -60,10 +55,9 @@ class Seq2SeqSemanticParser(object):
 
             epoch_loss = 0
             for start_ix in range(0, len(self.train_data), batch_size):
-            #  for data_point in self.train_data:
-                # x, y = get_xy([data_point])
                 x = get_batch(data=x_padded, start_ix=start_ix, batch_size=batch_size)
                 y = get_batch(data=y_padded, start_ix=start_ix, batch_size=batch_size)
+
                 optimizer.zero_grad()
                 y_pred = model(x=x, y=y, teacher_forcing=parser_conf.teacher_force_train)
                 y_pred = y_pred.view(-1, y_pred.shape[-1])

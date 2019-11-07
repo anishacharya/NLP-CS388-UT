@@ -2,6 +2,7 @@ from semantic_parsing.data_utils.data_utils import load_datasets, index_datasets
 from semantic_parsing.evaluate import evaluate
 from semantic_parsing.parsers.NearestNeighbour import NearestNeighborSemanticParser
 from semantic_parsing.parsers.Seq2SeqSemanticParser import Seq2SeqSemanticParser
+from semantic_parsing.parsers.Seq2SeqAttentionSP import Seq2SeqAttentionSemanticParser
 import semantic_parsing.semantic_parser_config as parser_config
 from common.utils.embedding import WordEmbedding
 import common.common_config as common_conf
@@ -92,6 +93,12 @@ if __name__ == '__main__':
                                         op_embed=op_embed)
         evaluate(dev_data=dev_data_indexed, decoder=decoder)
         # evaluate(dev_data=test_data_indexed, decoder=decoder)
+    elif args.parser == 'Seq2SeqAttention':
+        decoder = Seq2SeqAttentionSemanticParser(training_data=train_data_indexed,
+                                                 dev_data=dev_data_indexed,
+                                                 input_ix=input_indexer,
+                                                 output_ix=output_indexer)
+        evaluate(dev_data=dev_data_indexed, decoder=decoder)
     else:
         raise NotImplementedError
     print("=======FINAL EVALUATION ON BLIND TEST=======")

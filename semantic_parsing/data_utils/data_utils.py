@@ -115,18 +115,25 @@ def index_datasets(train_data, dev_data, test_data, example_len_limit, unk_thres
     return train_data_indexed, dev_data_indexed, test_data_indexed, input_indexer, output_indexer
 
 
-def get_xy(data: [Example]) -> [torch.Tensor, torch.Tensor]:
-    x = np.zeros((len(data), len(data[0].x_indexed)))
-    y = np.zeros((len(data), len(data[0].y_indexed)))
+def pad_data(data: List[Example], ip_ix: Indexer, op_ix: Indexer) -> List[Example]:
+    seq_len = 65
+    enc_PAD_IX = ip_ix.objs_to_ints[PAD_TOKEN]
+    dec_PAD_IX = op_ix.objs_to_ints[PAD_TOKEN]
+
+    # for data_point in data:
+
+
+def get_xy(data: [Example], enc_pad_ix: int, dec_pad_ix: int) -> [torch.Tensor, torch.Tensor]:
+    x = np.ones((len(data), 40)) * enc_pad_ix
+    y = np.ones((len(data), 65)) * dec_pad_ix
     i = 0
     for data_point in data:
-        x[i, :] = data_point.x_indexed
-        y[i, :] = data_point.y_indexed
+        x[i, 0:len(data_point.x_indexed)] = data_point.x_indexed
+        y[i, 0:len(data_point.y_indexed)] = data_point.y_indexed
         i += 1
         # x = torch.from_numpy(np.asarray(data_point.x_indexed))
         # y = torch.from_numpy(np.asarray(data_point.y_indexed))
     return torch.from_numpy(x).to(dtype=torch.long), torch.from_numpy(y).to(dtype=torch.long)
-
 
 ##################################################
 # YOU SHOULD NOT NEED TO LOOK AT THESE FUNCTIONS #
