@@ -5,7 +5,7 @@ from semantic_parsing.evaluate import evaluate
 
 from common.utils.indexer import Indexer
 from common.utils.embedding import WordEmbedding
-from common.Seq2Seq.RNNSeq2SeqAttention import Encoder, Decoder, Seq2Seq
+from common.Seq2Seq.RNNSeq2SeqAttention import Encoder, Decoder, Seq2SeqAttention, Attention
 import common.common_config as common_conf
 from common.utils.utils import get_batch
 
@@ -37,10 +37,13 @@ class Seq2SeqAttentionSemanticParser(object):
 
         epochs = parser_conf.epochs
         batch_size = parser_conf.batch_size
+        enc_hidden_dim = parser_conf.enc_hidden_size
+        dec_hidden_dim = parser_conf.dec_hidden_size
 
-        encoder = Encoder(conf=parser_conf)
-        decoder = Decoder(conf=parser_conf)
-        model = Seq2Seq(encoder=encoder, decoder=decoder)
+        attention = Attention(enc_hid_dim=enc_hidden_dim, dec_hid_dim=dec_hidden_dim)
+        encoder = Encoder(conf=parser_conf, ip_vocab=len(self.input_ix))
+        decoder = Decoder(conf=parser_conf, op_vocab=len(self.output_ix), attention=attention)
+        model = Seq2SeqAttention(encoder=encoder, decoder=decoder)
         print(model)
 
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -58,10 +61,14 @@ class Seq2SeqAttentionSemanticParser(object):
                 x = get_batch(data=x_padded, start_ix=start_ix, batch_size=batch_size)
                 y = get_batch(data=y_padded, start_ix=start_ix, batch_size=batch_size)
 
+                x.transpose_(0, 1)
+                y.transpose_(0, 1)
+
                 optimizer.zero_grad()
                 y_pred = model(x=x, y=y, teacher_forcing=parser_conf.teacher_force_train)
+
                 y_pred = y_pred.view(-1, y_pred.shape[-1])
-                y_true = y.view(-1)
+                y_true = y.reshape(-1)
 
                 loss = loss_function(y_pred, y_true)
                 loss.backward()
@@ -97,7 +104,7 @@ class Seq2SeqAttentionSemanticParser(object):
                 tok_t = self.output_ix.ints_to_objs[pred_ix_t]
                 y_tok.append(tok_t)
 
-            test_derivs.append([Derivation(data_point, 0.3, y_tok)])
+            test_derivs.append([Derivation(data_point, 1, y_tok)])
 
         return test_derivs
         # raise Exception("implement me!")

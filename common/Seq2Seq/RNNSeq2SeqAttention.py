@@ -3,13 +3,14 @@ import torch.nn as nn
 import torch.nn.functional as func
 
 from common.utils.embedding import WordEmbedding
+import common.common_config as common_conf
 import random
-
+import numpy as np
 
 class Encoder(nn.Module):
-    def __init__(self, conf, encoder_embed: WordEmbedding):
+    def __init__(self, conf, ip_vocab):
         super().__init__()
-        self.input_dim = len(encoder_embed.word_ix)
+        self.input_dim = ip_vocab
         self.emb_dim = conf.enc_emb_dim
         self.enc_hid_dim = conf.enc_hidden_size
         self.dec_hid_dim = conf.dec_hidden_size
@@ -46,9 +47,9 @@ class Attention(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, conf, decoder_embed: WordEmbedding, attention):
+    def __init__(self, conf, op_vocab, attention):
         super().__init__()
-        self.output_dim = len(decoder_embed.word_ix)
+        self.output_dim = op_vocab
         self.emb_dim = conf.dec_emb_dim
         self.enc_hid_dim = conf.enc_hidden_size
         self.dec_hid_dim = conf.dec_hidden_size
@@ -79,24 +80,27 @@ class Decoder(nn.Module):
 
 
 class Seq2SeqAttention(nn.Module):
-    def __init__(self, encoder, decoder, device):
+    def __init__(self, encoder, decoder):
         super().__init__()
         self.encoder = encoder
         self.decoder = decoder
-        self.device = device
 
-    def forward(self, src, trg, teacher_forcing_ratio=0.5):
-        batch_size = src.shape[1]
-        max_len = trg.shape[0]
+    def forward(self, x, y, teacher_forcing=0.5):
+        batch_size = x.shape[1]
+        max_len = y.shape[0]
         trg_vocab_size = self.decoder.output_dim
-        outputs = torch.zeros(max_len, batch_size, trg_vocab_size).to(self.device)
-        encoder_outputs, hidden = self.encoder(src)
-        input = trg[0, :]
-        for t in range(1, max_len):
-            output, hidden = self.decoder(input, hidden, encoder_outputs)
+        outputs = torch.zeros(max_len, batch_size, trg_vocab_size)
+        encoder_outputs, hidden = self.encoder(x)
+
+        # _BOS_IX = self.decoder.word_embed.word_ix.objs_to_ints[common_conf.BOS_TOKEN]
+        next_timestep_input = torch.from_numpy(np.ones(batch_size)).to(dtype=torch.long)
+
+        # input = y[0, :]
+        for t in range(0, max_len):
+            output, hidden = self.decoder(next_timestep_input, hidden, encoder_outputs)
             outputs[t] = output
-            teacher_force = random.random() < teacher_forcing_ratio
+            teacher_force = random.random() < teacher_forcing
             top1 = output.argmax(1)
-            input = trg[t] if teacher_force else top1
+            next_timestep_input = y[t] if teacher_force else top1
 
         return outputs

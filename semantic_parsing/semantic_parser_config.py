@@ -26,7 +26,7 @@ enc_emb_dim = 100
 enc_hidden_size = 50
 enc_rnn_dropout = 0.2
 
-dec_embed_dim = 100
+dec_emb_dim = 100
 dec_hidden_size = enc_hidden_size
 dec_rnn_dropout = 0.3
 
