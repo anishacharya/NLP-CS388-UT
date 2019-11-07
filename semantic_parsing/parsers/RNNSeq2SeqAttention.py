@@ -9,7 +9,7 @@ class Encoder(nn.Module):
         super().__init__()
         self.input_dim = len(encoder_embed.word_ix)
         self.emb_dim = encoder_embed.emb_dim
-        self.enc_hid_dim = conf.encoder_
+        self.enc_hid_dim = conf.
 
 
 

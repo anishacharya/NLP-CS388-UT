@@ -38,7 +38,7 @@ class RNNEncoder(nn.Module):
             if 'bias' in name:
                 nn.init.constant_(param, 0.0)
             elif 'weight' in name:
-                nn.init.xavier_normal_(param)
+                nn.init.xavier_normal_(param, gain=1)
 
     def forward(self, data_batch):
         embedded_data = self.dropout(self.embedding(data_batch))
