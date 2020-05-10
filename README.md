@@ -1,4 +1,4 @@
-# NLP_Done_Right
+# NLP Done Right
 
 *Please cite this repository if you use any of the code in your research*
 
