@@ -12,4 +12,7 @@ Also please **NEVER** write flat python main.py files with 2000 lines of code ( 
 **Framework** PyTorch
 
 Addiitonally this contains Four Project Reports.   
-http://www.cs.utexas.edu/~gdurrett/courses/fa2019/cs388.shtml
+http://www.cs.utexas.edu/~gdurrett/courses/fa2019/cs388.shtml.  
+
+## Feature Engineered Named Entity Recognition
+Named Entity Recognition(NER) is a fundamen-tal NLP task where the objective is to identify thenamed  entities  in  a  piece  of  text.   In  this  work,we focus on designing powerful features for NER,which leads to reasonably good accuracy withoutthe  need  of  a  complex  model.   We  tried  our  ap-proach on CONLL-2003 NER dataset which hasfour  class  of  named  entities:  person,  organiza-tion,  location,  and miscellaneous.  We just focuson identifying instances of the person label in iso-lation for this work.
