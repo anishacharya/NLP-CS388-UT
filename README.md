@@ -11,7 +11,7 @@ Also please **NEVER** write flat python main.py files with 2000 lines of code ( 
 
 **Framework** PyTorch
 
-Addiitonally this contains Four Project Reports.   
+Additonally this contains Four Project Reports.   
 http://www.cs.utexas.edu/~gdurrett/courses/fa2019/cs388.shtml.  
 
 
