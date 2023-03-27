@@ -1,4 +1,4 @@
-# NLP Done Right
+# NLP-CS388-UT
 
 *Please cite this repository if you use any of the code in your research*
 
